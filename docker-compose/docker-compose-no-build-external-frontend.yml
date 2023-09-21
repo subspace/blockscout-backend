@@ -44,7 +44,7 @@ services:
       ETHEREUM_JSONRPC_VARIANT: "ganache"
       ETHEREUM_JSONRPC_HTTP_URL: https://domain-3.evm.gemini-3f.subspace.network
       ETHEREUM_JSONRPC_TRACE_URL: https://domain-3.evm.gemini-3f.subspace.network
-      ETHEREUM_JSONRPC_WS_URL: ws://domain-3.evm.gemini-3f.subspace.network/ws
+      ETHEREUM_JSONRPC_WS_URL: wss://domain-3.evm.gemini-3f.subspace.network/ws
       INDEXER_DISABLE_INTERNAL_TRANSACTIONS_FETCHER: "true"
       INDEXER_DISABLE_PENDING_TRANSACTIONS_FETCHER: "true"
       DATABASE_URL: postgresql://postgres:@host.docker.internal:7432/blockscout?ssl=false
