@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   redis_db:
@@ -14,30 +14,54 @@ services:
   backend:
     depends_on:
       - db
+      - smart-contract-verifier
       - redis_db
-    image: blockscout/blockscout:${DOCKER_TAG:-master}
+    image: blockscout/blockscout:${DOCKER_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+      args:
+        CACHE_EXCHANGE_RATES_PERIOD: ""
+        API_V1_READ_METHODS_DISABLED: "false"
+        DISABLE_WEBAPP: "false"
+        API_V1_WRITE_METHODS_DISABLED: "false"
+        CACHE_TOTAL_GAS_USAGE_COUNTER_ENABLED: ""
+        CACHE_ADDRESS_WITH_BALANCES_UPDATE_INTERVAL: ""
+        ADMIN_PANEL_ENABLED: ""
+        RELEASE_VERSION: 5.2.2
     pull_policy: always
     restart: always
     stop_grace_period: 5m
-    container_name: 'backend'
+    container_name: "blockscout"
     links:
       - db:database
     command: sh -c "bin/blockscout eval \"Elixir.Explorer.ReleaseTasks.create_and_migrate()\" && bin/blockscout start"
     extra_hosts:
-      - 'host.docker.internal:host-gateway'
+      - "host.docker.internal:host-gateway"
     env_file:
-      -  ./envs/common-blockscout.env
+      - ./envs/common-blockscout.env
     environment:
-        ETHEREUM_JSONRPC_VARIANT: 'ganache'
-        ETHEREUM_JSONRPC_HTTP_URL: http://host.docker.internal:8545/
-        ETHEREUM_JSONRPC_TRACE_URL: http://host.docker.internal:8545/
-        ETHEREUM_JSONRPC_WS_URL: ws://host.docker.internal:8545/
-        INDEXER_DISABLE_INTERNAL_TRANSACTIONS_FETCHER: 'true'
-        INDEXER_DISABLE_PENDING_TRANSACTIONS_FETCHER: 'true'
-        DATABASE_URL: postgresql://postgres:@host.docker.internal:7432/blockscout?ssl=false
-        CHAIN_ID: '1337'
+      ETHEREUM_JSONRPC_VARIANT: "ganache"
+      ETHEREUM_JSONRPC_HTTP_URL: https://domain-3.evm.gemini-3f.subspace.network
+      ETHEREUM_JSONRPC_TRACE_URL: https://domain-3.evm.gemini-3f.subspace.network
+      ETHEREUM_JSONRPC_WS_URL: ws://domain-3.evm.gemini-3f.subspace.network/ws
+      INDEXER_DISABLE_INTERNAL_TRANSACTIONS_FETCHER: "true"
+      INDEXER_DISABLE_PENDING_TRANSACTIONS_FETCHER: "true"
+      DATABASE_URL: postgresql://postgres:@host.docker.internal:7432/blockscout?ssl=false
+      ECTO_USE_SSL: "false"
+      SECRET_KEY_BASE: "56NtB48ear7+wMSf0IQuWDAAazhpb31qyc7GiyspBP2vh7t5zlCsF5QDv76chXeN"
+      CHAIN_ID: "1002"
+      API_V2_ENABLED: "true"
+      MIX_ENV: "prod"
+    ports:
+      - 4000:4000
     volumes:
       - ./logs/:/app/logs/
+
+  smart-contract-verifier:
+    extends:
+      file: ./services/docker-compose-smart-contract-verifier.yml
+      service: smart-contract-verifier
 
   visualizer:
     extends:
@@ -48,6 +72,13 @@ services:
     extends:
       file: ./services/docker-compose-sig-provider.yml
       service: sig-provider
+
+  frontend:
+    depends_on:
+      - backend
+    extends:
+      file: ./services/docker-compose-frontend.yml
+      service: frontend
 
   stats-db:
     depends_on:
@@ -66,6 +97,7 @@ services:
   proxy:
     depends_on:
       - backend
+      - frontend
       - stats
     extends:
       file: ./services/docker-compose-nginx.yml
