@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  certbot:
+    container_name: "certbot"
+    image: certbot/certbot
+    command: sh -c "certbot certonly --webroot -w /var/www/html --non-interactive -v --agree-tos -m alerts@subspace.network -d blockscout.subspace.network --preferred-challenges=http"
+    entrypoint: ""
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/lib/letsencrypt:/var/lib/letsencrypt
+      - /var/www/html:/var/www/html
+    environment:
+      - TERM=xterm
