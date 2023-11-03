@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 
 services:
   frontend:
@@ -6,6 +6,6 @@ services:
     pull_policy: always
     platform: linux/amd64
     restart: always
-    container_name: 'frontend'
+    container_name: "frontend"
     env_file:
-      -  ../envs/common-frontend.env
+      - ../envs/common-frontend.env
