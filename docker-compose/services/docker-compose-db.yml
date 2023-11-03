@@ -1,8 +1,8 @@
-version: '3.8'
+version: "3.8"
 
 services:
   db-init:
-    image: postgres:14
+    image: postgres:16
     volumes:
       - ./blockscout-db-data:/var/lib/postgresql/data
     entrypoint:
@@ -14,10 +14,10 @@ services:
   db:
     image: postgres:16
     restart: always
-    container_name: 'db'
+    container_name: "db"
     command: postgres -c 'max_connections=200'
     environment:
-        POSTGRES_USER: 'blockscout'
+      POSTGRES_USER: "blockscout"
     ports:
       - 7432:5432
     volumes:
