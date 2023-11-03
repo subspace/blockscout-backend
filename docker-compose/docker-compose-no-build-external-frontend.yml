@@ -42,9 +42,9 @@ services:
       - ./envs/common-blockscout.env
     environment:
       ETHEREUM_JSONRPC_VARIANT: "ganache"
-      ETHEREUM_JSONRPC_HTTP_URL: https://domain-3.evm.gemini-3f.subspace.network
-      ETHEREUM_JSONRPC_TRACE_URL: https://domain-3.evm.gemini-3f.subspace.network
-      ETHEREUM_JSONRPC_WS_URL: wss://domain-3.evm.gemini-3f.subspace.network/ws
+      ETHEREUM_JSONRPC_HTTP_URL: https://nova.gemini-3g.subspace.network
+      ETHEREUM_JSONRPC_TRACE_URL: https://nova.gemini-3g.subspace.network
+      ETHEREUM_JSONRPC_WS_URL: wss://nova.gemini-3g.subspace.network/ws
       INDEXER_DISABLE_INTERNAL_TRANSACTIONS_FETCHER: "true"
       INDEXER_DISABLE_PENDING_TRANSACTIONS_FETCHER: "true"
       DATABASE_URL: postgresql://postgres:@host.docker.internal:7432/blockscout?ssl=false
@@ -115,6 +115,6 @@ services:
       - "/:/host:ro"
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
-      NRIA_LICENSE_KEY: ${NR_API_KEY}
-      NRIA_DISPLAY_NAME: "blockscout-gemini-3f"
+      NRIA_LICENSE_KEY: "${NR_API_KEY}"
+      NRIA_DISPLAY_NAME: "blockscout-gemini-3g"
     restart: unless-stopped
