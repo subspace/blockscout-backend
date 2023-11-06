@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.9"
 
 services:
   redis_db:
@@ -31,20 +31,20 @@ services:
         RELEASE_VERSION: 5.2.3
     restart: always
     stop_grace_period: 5m
-    container_name: 'backend'
+    container_name: "backend"
     links:
       - db:database
     command: sh -c "bin/blockscout eval \"Elixir.Explorer.ReleaseTasks.create_and_migrate()\" && bin/blockscout start"
     extra_hosts:
-      - 'host.docker.internal:host-gateway'
+      - "host.docker.internal:host-gateway"
     env_file:
-      -  ./envs/common-blockscout.env
+      - ./envs/common-blockscout.env
     environment:
-        ETHEREUM_JSONRPC_HTTP_URL: http://host.docker.internal:8545/
-        ETHEREUM_JSONRPC_TRACE_URL: http://host.docker.internal:8545/
-        ETHEREUM_JSONRPC_WS_URL: ws://host.docker.internal:8545/
-        DATABASE_URL: postgresql://postgres:@host.docker.internal:7432/blockscout?ssl=false
-        CHAIN_ID: '1337'
+      ETHEREUM_JSONRPC_HTTP_URL: https://nova.gemini-3g.subspace.network/ws
+      ETHEREUM_JSONRPC_TRACE_URL: https://nova.gemini-3g.subspace.network/ws
+      ETHEREUM_JSONRPC_WS_URL: wss://nova.gemini-3g.subspace.network/ws
+      DATABASE_URL: postgresql://postgres:@host.docker.internal:7432/blockscout?ssl=false
+      CHAIN_ID: "1002"
     volumes:
       - ./logs/:/app/logs/
 
