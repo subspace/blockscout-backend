@@ -1,3 +1,71 @@
+defmodule Explorer.Chain.Block.Schema do
+  @moduledoc false
+
+  alias Explorer.Chain.{Address, Block, Hash, PendingBlockOperation, Transaction, Wei, Withdrawal}
+  alias Explorer.Chain.Block.{Reward, SecondDegreeRelation}
+
+  @chain_type_fields (case Application.compile_env(:explorer, :chain_type) do
+                        "rsk" ->
+                          elem(
+                            quote do
+                              field(:bitcoin_merged_mining_header, :binary)
+                              field(:bitcoin_merged_mining_coinbase_transaction, :binary)
+                              field(:bitcoin_merged_mining_merkle_proof, :binary)
+                              field(:hash_for_merged_mining, :binary)
+                              field(:minimum_gas_price, :decimal)
+                            end,
+                            2
+                          )
+
+                        _ ->
+                          []
+                      end)
+
+  defmacro generate do
+    quote do
+      @primary_key false
+      typed_schema "blocks" do
+        field(:hash, Hash.Full, primary_key: true, null: false)
+        field(:consensus, :boolean, null: false)
+        field(:difficulty, :decimal)
+        field(:gas_limit, :decimal, null: false)
+        field(:gas_used, :decimal, null: false)
+        field(:nonce, Hash.Nonce, null: false)
+        field(:number, :integer, null: false)
+        field(:size, :integer)
+        field(:timestamp, :utc_datetime_usec, null: false)
+        field(:total_difficulty, :decimal)
+        field(:refetch_needed, :boolean)
+        field(:base_fee_per_gas, Wei)
+        field(:is_empty, :boolean)
+
+        timestamps()
+
+        belongs_to(:miner, Address, foreign_key: :miner_hash, references: :hash, type: Hash.Address, null: false)
+
+        has_many(:nephew_relations, SecondDegreeRelation, foreign_key: :uncle_hash, references: :hash)
+        has_many(:nephews, through: [:nephew_relations, :nephew], references: :hash)
+
+        belongs_to(:parent, Block, foreign_key: :parent_hash, references: :hash, type: Hash.Full, null: false)
+
+        has_many(:uncle_relations, SecondDegreeRelation, foreign_key: :nephew_hash, references: :hash)
+        has_many(:uncles, through: [:uncle_relations, :uncle], references: :hash)
+
+        has_many(:transactions, Transaction, references: :hash)
+        has_many(:transaction_forks, Transaction.Fork, foreign_key: :uncle_hash, references: :hash)
+
+        has_many(:rewards, Reward, foreign_key: :block_hash, references: :hash)
+
+        has_many(:withdrawals, Withdrawal, foreign_key: :block_hash, references: :hash)
+
+        has_one(:pending_operations, PendingBlockOperation, foreign_key: :block_hash, references: :hash)
+
+        unquote_splicing(@chain_type_fields)
+      end
+    end
+  end
+end
+
 defmodule Explorer.Chain.Block do
   @moduledoc """
   A package of data that contains zero or more transactions, the hash of the previous block ("parent"), and optionally
@@ -5,10 +73,12 @@ defmodule Explorer.Chain.Block do
   structure that they form is called a "blockchain".
   """
 
+  require Explorer.Chain.Block.Schema
+
   use Explorer.Schema
 
-  alias Explorer.Chain.{Address, Block, Gas, Hash, PendingBlockOperation, Transaction, Wei, Withdrawal}
-  alias Explorer.Chain.Block.{EmissionReward, Reward, SecondDegreeRelation}
+  alias Explorer.Chain.{Block, Hash, Transaction, Wei}
+  alias Explorer.Chain.Block.{EmissionReward, Reward}
   alias Explorer.Repo
 
   @optional_attrs ~w(size refetch_needed total_difficulty difficulty base_fee_per_gas)a
@@ -38,30 +108,6 @@ defmodule Explorer.Chain.Block do
   Number of the block in the chain.
   """
   @type block_number :: non_neg_integer()
-
-  case Application.compile_env(:explorer, :chain_type) do
-    "rsk" ->
-      @chain_type_fields quote(
-                           do: [
-                             bitcoin_merged_mining_header: binary(),
-                             bitcoin_merged_mining_coinbase_transaction: binary(),
-                             bitcoin_merged_mining_merkle_proof: binary(),
-                             hash_for_merged_mining: binary(),
-                             minimum_gas_price: Decimal.t()
-                           ]
-                         )
-
-    "ethereum" ->
-      @chain_type_fields quote(
-                           do: [
-                             blob_gas_used: Decimal.t(),
-                             excess_blob_gas: Decimal.t()
-                           ]
-                         )
-
-    _ ->
-      @chain_type_fields quote(do: [])
-  end
 
   @typedoc """
    * `consensus`
@@ -100,7 +146,7 @@ defmodule Explorer.Chain.Block do
   end}
   """
   @type t :: %__MODULE__{
-          unquote_splicing(@chain_type_fields),
+          unquote_splicing(@rootstock_fields),
           consensus: boolean(),
           difficulty: difficulty(),
           gas_limit: Gas.t(),
@@ -135,20 +181,12 @@ defmodule Explorer.Chain.Block do
     field(:base_fee_per_gas, Wei)
     field(:is_empty, :boolean)
 
-    case Application.compile_env(:explorer, :chain_type) do
-      "rsk" ->
-        field(:bitcoin_merged_mining_header, :binary)
-        field(:bitcoin_merged_mining_coinbase_transaction, :binary)
-        field(:bitcoin_merged_mining_merkle_proof, :binary)
-        field(:hash_for_merged_mining, :binary)
-        field(:minimum_gas_price, :decimal)
-
-      "ethereum" ->
-        field(:blob_gas_used, :decimal)
-        field(:excess_blob_gas, :decimal)
-
-      _ ->
-        nil
+    if Application.compile_env(:explorer, :chain_type) == "rsk" do
+      field(:bitcoin_merged_mining_header, :binary)
+      field(:bitcoin_merged_mining_coinbase_transaction, :binary)
+      field(:bitcoin_merged_mining_merkle_proof, :binary)
+      field(:hash_for_merged_mining, :binary)
+      field(:minimum_gas_price, :decimal)
     end
 
     timestamps()
