@@ -43,6 +43,11 @@ services:
       file: ./services/docker-compose-frontend.yml
       service: frontend
 
+  stats-db-init:
+    extends:
+      file: ./services/docker-compose-stats.yml
+      service: stats-db-init
+
   stats-db:
     depends_on:
       - backend

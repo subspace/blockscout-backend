@@ -32,9 +32,9 @@ defmodule BlockScoutWeb.API.V2.SmartContractController do
   def smart_contract(conn, %{"address_hash" => address_hash_string} = params) do
     with {:format, {:ok, address_hash}} <- {:format, Chain.string_to_address_hash(address_hash_string)},
          {:ok, false} <- AccessHelper.restricted_access?(address_hash_string, params),
-         _ <- PublishHelper.check_and_verify(address_hash_string),
+         _ <- PublishHelper.sourcify_check(address_hash_string),
          {:not_found, {:ok, address}} <-
-           {:not_found, Chain.find_contract_address(address_hash, @smart_contract_address_options, true)} do
+           {:not_found, Chain.find_contract_address(address_hash, @smart_contract_address_options, false)} do
       conn
       |> put_status(200)
       |> render(:smart_contract, %{address: address})

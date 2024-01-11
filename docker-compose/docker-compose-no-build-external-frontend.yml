@@ -6,6 +6,11 @@ services:
       file: ./services/docker-compose-redis.yml
       service: redis_db
 
+  db-init:
+    extends:
+      file: ./services/docker-compose-db.yml
+      service: db-init
+
   db:
     extends:
       file: ./services/docker-compose-db.yml
@@ -41,22 +46,13 @@ services:
     env_file:
       - ./envs/common-blockscout.env
     environment:
+      ETHEREUM_JSONRPC_TRACE_URL: https://nova.gemini-3g.subspace.network
       ETHEREUM_JSONRPC_VARIANT: "ganache"
       ETHEREUM_JSONRPC_HTTP_URL: https://nova.gemini-3g.subspace.network/ws
       ETHEREUM_JSONRPC_TRACE_URL: https://nova.gemini-3g.subspace.network/ws
       ETHEREUM_JSONRPC_WS_URL: wss://nova.gemini-3g.subspace.network/ws
       INDEXER_DISABLE_INTERNAL_TRANSACTIONS_FETCHER: "true"
       INDEXER_DISABLE_PENDING_TRANSACTIONS_FETCHER: "true"
-      DATABASE_URL: postgresql://postgres:@host.docker.internal:7432/blockscout?ssl=false
-      ECTO_USE_SSL: "false"
-      SECRET_KEY_BASE: "56NtB48ear7+wMSf0IQuWDAAazhpb31qyc7GiyspBP2vh7t5zlCsF5QDv76chXeN"
-      CHAIN_ID: "1002"
-      API_V2_ENABLED: "true"
-      MIX_ENV: "prod"
-    ports:
-      - 4000:4000
-    volumes:
-      - ./logs/:/app/logs/
 
   smart-contract-verifier:
     extends:
@@ -79,6 +75,11 @@ services:
     extends:
       file: ./services/docker-compose-frontend.yml
       service: frontend
+
+  stats-db-init:
+    extends:
+      file: ./services/docker-compose-stats.yml
+      service: stats-db-init
 
   stats-db:
     depends_on:
@@ -116,5 +117,5 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       NRIA_LICENSE_KEY: "${NR_API_KEY}"
-      NRIA_DISPLAY_NAME: "blockscout-gemini-3f"
+      NRIA_DISPLAY_NAME: "blockscout-gemini-3g"
     restart: unless-stopped

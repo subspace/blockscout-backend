@@ -6,6 +6,11 @@ services:
       file: ./services/docker-compose-redis.yml
       service: redis_db
 
+  db-init:
+    extends:
+      file: ./services/docker-compose-db.yml
+      service: db-init
+
   db:
     extends:
       file: ./services/docker-compose-db.yml
@@ -15,8 +20,9 @@ services:
     depends_on:
       - db
       - redis_db
-    image: blockscout/blockscout:${DOCKER_TAG:-latest}
-    pull_policy: always
+    extends:
+      file: ./services/docker-compose-backend.yml
+      service: backend
     build:
       context: ..
       dockerfile: ./docker/Dockerfile
@@ -65,6 +71,11 @@ services:
       file: ./services/docker-compose-frontend.yml
       service: frontend
 
+  stats-db-init:
+    extends:
+      file: ./services/docker-compose-stats.yml
+      service: stats-db-init
+
   stats-db:
     depends_on:
       - backend
@@ -87,3 +98,19 @@ services:
     extends:
       file: ./services/docker-compose-nginx.yml
       service: proxy
+
+  agent:
+    container_name: newrelic-infra
+    image: newrelic/infrastructure:latest
+    cap_add:
+      - SYS_PTRACE
+    network_mode: bridge
+    pid: host
+    privileged: true
+    volumes:
+      - "/:/host:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      NRIA_LICENSE_KEY: "${NR_API_KEY}"
+      NRIA_DISPLAY_NAME: "blockscout-gemini-3g"
+    restart: unless-stopped
