@@ -17,7 +17,8 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_HOST_AUTH_METHOD: "trust"
     ports:
-      - 7432:5432
+      - target: 5432
+        published: 7432
     volumes:
       - ./blockscout-db-data:/var/lib/postgresql/data
     healthcheck:

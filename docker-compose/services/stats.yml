@@ -26,7 +26,8 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_HOST_AUTH_METHOD: "trust"
     ports:
-      - 7433:5432
+      - target: 5432
+        published: 7433
     volumes:
       - ./stats-db-data:/var/lib/postgresql/data
     healthcheck:
