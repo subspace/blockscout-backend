@@ -752,7 +752,7 @@ defmodule BlockScoutWeb.API.V2.TransactionView do
         _,
         skip_sc_check?
       ) do
-    if skip_sc_check? || Address.is_smart_contract(to_address) do
+    if skip_sc_check? || Address.smart_contract?(to_address) do
       "0x" <> Base.encode16(method_id, case: :lower)
     else
       nil
@@ -833,7 +833,7 @@ defmodule BlockScoutWeb.API.V2.TransactionView do
 
   def tx_types(%Transaction{to_address: to_address} = tx, types, :contract_call) do
     types =
-      if Address.is_smart_contract(to_address) do
+      if Address.smart_contract?(to_address) do
         [:contract_call | types]
       else
         types
@@ -855,7 +855,7 @@ defmodule BlockScoutWeb.API.V2.TransactionView do
 
   def tx_types(tx, types, :rootstock_remasc) do
     types =
-      if Transaction.is_rootstock_remasc_transaction(tx) do
+      if Transaction.rootstock_remasc_transaction?(tx) do
         [:rootstock_remasc | types]
       else
         types
@@ -865,7 +865,7 @@ defmodule BlockScoutWeb.API.V2.TransactionView do
   end
 
   def tx_types(tx, types, :rootstock_bridge) do
-    if Transaction.is_rootstock_bridge_transaction(tx) do
+    if Transaction.rootstock_bridge_transaction?(tx) do
       [:rootstock_bridge | types]
     else
       types
