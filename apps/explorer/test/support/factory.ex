@@ -66,8 +66,8 @@ defmodule Explorer.Factory do
   end
 
   def auth_factory do
-    %{
-      info: %{
+    %Auth{
+      info: %Info{
         birthday: nil,
         description: nil,
         email: sequence(:email, &"test_user-#{&1}@blockscout.com"),
