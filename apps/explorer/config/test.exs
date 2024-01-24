@@ -47,8 +47,8 @@ for repo <- [
       Explorer.Repo.PolygonEdge,
       Explorer.Repo.PolygonZkevm,
       Explorer.Repo.RSK,
-      Explorer.Repo.Suave,
-      Explorer.Repo.Beacon
+      Explorer.Repo.Shibarium,
+      Explorer.Repo.Suave
     ] do
   config :explorer, repo,
     database: "explorer_test",
