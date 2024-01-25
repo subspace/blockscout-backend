@@ -682,6 +682,41 @@ config :indexer, Indexer.Fetcher.RootstockData,
   max_concurrency: ConfigHelper.parse_integer_env_var("INDEXER_ROOTSTOCK_DATA_FETCHER_CONCURRENCY", 5),
   db_batch_size: ConfigHelper.parse_integer_env_var("INDEXER_ROOTSTOCK_DATA_FETCHER_DB_BATCH_SIZE", 300)
 
+config :indexer, Indexer.Fetcher.Beacon, beacon_rpc: System.get_env("INDEXER_BEACON_RPC_URL") || "http://localhost:5052"
+
+config :indexer, Indexer.Fetcher.Beacon.Blob.Supervisor,
+  disabled?:
+    ConfigHelper.chain_type() != "ethereum" ||
+      ConfigHelper.parse_bool_env_var("INDEXER_DISABLE_BEACON_BLOB_FETCHER")
+
+config :indexer, Indexer.Fetcher.Beacon.Blob,
+  slot_duration: ConfigHelper.parse_integer_env_var("INDEXER_BEACON_BLOB_FETCHER_SLOT_DURATION", 12),
+  reference_slot: ConfigHelper.parse_integer_env_var("INDEXER_BEACON_BLOB_FETCHER_REFERENCE_SLOT", 8_000_000),
+  reference_timestamp:
+    ConfigHelper.parse_integer_env_var("INDEXER_BEACON_BLOB_FETCHER_REFERENCE_TIMESTAMP", 1_702_824_023),
+  start_block: ConfigHelper.parse_integer_env_var("INDEXER_BEACON_BLOB_FETCHER_START_BLOCK", 19_200_000),
+  end_block: ConfigHelper.parse_integer_env_var("INDEXER_BEACON_BLOB_FETCHER_END_BLOCK", 0)
+
+config :indexer, Indexer.Fetcher.Shibarium.L1,
+  rpc: System.get_env("INDEXER_SHIBARIUM_L1_RPC"),
+  start_block: System.get_env("INDEXER_SHIBARIUM_L1_START_BLOCK"),
+  deposit_manager_proxy: System.get_env("INDEXER_SHIBARIUM_L1_DEPOSIT_MANAGER_CONTRACT"),
+  ether_predicate_proxy: System.get_env("INDEXER_SHIBARIUM_L1_ETHER_PREDICATE_CONTRACT"),
+  erc20_predicate_proxy: System.get_env("INDEXER_SHIBARIUM_L1_ERC20_PREDICATE_CONTRACT"),
+  erc721_predicate_proxy: System.get_env("INDEXER_SHIBARIUM_L1_ERC721_PREDICATE_CONTRACT"),
+  erc1155_predicate_proxy: System.get_env("INDEXER_SHIBARIUM_L1_ERC1155_PREDICATE_CONTRACT"),
+  withdraw_manager_proxy: System.get_env("INDEXER_SHIBARIUM_L1_WITHDRAW_MANAGER_CONTRACT")
+
+config :indexer, Indexer.Fetcher.Shibarium.L2,
+  start_block: System.get_env("INDEXER_SHIBARIUM_L2_START_BLOCK"),
+  child_chain: System.get_env("INDEXER_SHIBARIUM_L2_CHILD_CHAIN_CONTRACT"),
+  weth: System.get_env("INDEXER_SHIBARIUM_L2_WETH_CONTRACT"),
+  bone_withdraw: System.get_env("INDEXER_SHIBARIUM_L2_BONE_WITHDRAW_CONTRACT")
+
+config :indexer, Indexer.Fetcher.Shibarium.L1.Supervisor, enabled: ConfigHelper.chain_type() == "shibarium"
+
+config :indexer, Indexer.Fetcher.Shibarium.L2.Supervisor, enabled: ConfigHelper.chain_type() == "shibarium"
+
 Code.require_file("#{config_env()}.exs", "config/runtime")
 
 for config <- "../apps/*/config/runtime/#{config_env()}.exs" |> Path.expand(__DIR__) |> Path.wildcard() do
