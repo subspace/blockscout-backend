@@ -21,9 +21,9 @@ services:
     container_name: "stats-postgres"
     command: postgres -c 'max_connections=200'
     environment:
-      POSTGRES_DB: "stats"
-      POSTGRES_USER: "stats"
-      POSTGRES_PASSWORD: "n0uejXPl61ci6ldCuE2gQU5Y"
+      POSTGRES_PASSWORD: ""
+      POSTGRES_USER: "postgres"
+      POSTGRES_HOST_AUTH_METHOD: "trust"
     ports:
       - 7433:5432
     volumes:
@@ -41,8 +41,6 @@ services:
     platform: linux/amd64
     restart: always
     container_name: "stats"
-    depends_on:
-      - "stats-db"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     env_file:

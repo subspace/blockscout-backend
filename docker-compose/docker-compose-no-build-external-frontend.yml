@@ -21,9 +21,23 @@ services:
       - db
       - smart-contract-verifier
       - redis_db
-    extends:
-      file: ./services/docker-compose-backend.yml
-      service: backend
+    image: ghcr.io/subspace/blockscout-backend@sha256:5ab061750801c713064b510068c30edd6d5854068a3b093b658279e7424f7db4
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+      args:
+        CACHE_EXCHANGE_RATES_PERIOD: ""
+        API_V1_READ_METHODS_DISABLED: "false"
+        DISABLE_WEBAPP: "false"
+        API_V1_WRITE_METHODS_DISABLED: "false"
+        CACHE_TOTAL_GAS_USAGE_COUNTER_ENABLED: ""
+        CACHE_ADDRESS_WITH_BALANCES_UPDATE_INTERVAL: ""
+        ADMIN_PANEL_ENABLED: ""
+        RELEASE_VERSION: 5.2.2
+    pull_policy: always
+    restart: always
+    stop_grace_period: 5m
+    container_name: "blockscout"
     links:
       - db:database
     command: sh -c "bin/blockscout eval \"Elixir.Explorer.ReleaseTasks.create_and_migrate()\" && bin/blockscout start"
@@ -34,7 +48,8 @@ services:
     environment:
       ETHEREUM_JSONRPC_TRACE_URL: https://nova.gemini-3g.subspace.network
       ETHEREUM_JSONRPC_VARIANT: "ganache"
-      ETHEREUM_JSONRPC_HTTP_URL: https://nova.gemini-3g.subspace.network
+      ETHEREUM_JSONRPC_HTTP_URL: https://nova.gemini-3g.subspace.network/ws
+      ETHEREUM_JSONRPC_TRACE_URL: https://nova.gemini-3g.subspace.network/ws
       ETHEREUM_JSONRPC_WS_URL: wss://nova.gemini-3g.subspace.network/ws
       INDEXER_DISABLE_INTERNAL_TRANSACTIONS_FETCHER: "true"
       INDEXER_DISABLE_PENDING_TRANSACTIONS_FETCHER: "true"
