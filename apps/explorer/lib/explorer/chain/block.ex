@@ -340,7 +340,10 @@ defmodule Explorer.Chain.Block do
     end
   end
 
-  @uncle_reward_coef 1 / 32
+  defp base_fee_per_gas_to_wei(%Wei{} = wei), do: wei
+  defp base_fee_per_gas_to_wei(base_fee_per_gas), do: %Wei{value: Decimal.new(base_fee_per_gas)}
+
+  @uncle_reward_coef 32
   @spec block_reward_by_parts(Block.t(), [Transaction.t()]) :: %{
           block_number: block_number(),
           block_hash: Hash.Full.t(),
@@ -348,7 +351,7 @@ defmodule Explorer.Chain.Block do
           static_reward: any(),
           transaction_fees: any(),
           burnt_fees: Wei.t() | nil,
-          uncle_reward: Wei.t() | nil | false
+          uncle_reward: Wei.t()
         }
   def block_reward_by_parts(block, transactions) do
     %{hash: block_hash, number: block_number} = block
@@ -365,10 +368,10 @@ defmodule Explorer.Chain.Block do
         )
       ) || %Wei{value: Decimal.new(0)}
 
-    has_uncles? = is_list(block.uncles) and not Enum.empty?(block.uncles)
+    uncles_count = if is_list(block.uncles), do: Enum.count(block.uncles), else: 0
 
     burnt_fees = burnt_fees(transactions, base_fee_per_gas)
-    uncle_reward = (has_uncles? && Wei.mult(static_reward, Decimal.from_float(@uncle_reward_coef))) || nil
+    uncle_reward = static_reward |> Wei.div(@uncle_reward_coef) |> Wei.mult(uncles_count)
 
     # eip4844 blob transactions don't impact validator rewards, so we don't count them here as part of transaction_fees and burnt_fees
     %{
@@ -377,8 +380,8 @@ defmodule Explorer.Chain.Block do
       miner_hash: block.miner_hash,
       static_reward: static_reward,
       transaction_fees: %Wei{value: transaction_fees},
-      burnt_fees: %Wei{value: burnt_fees},
-      uncle_reward: uncle_reward || %Wei{value: Decimal.new(0)}
+      burnt_fees: burnt_fees || %Wei{value: Decimal.new(0)},
+      uncle_reward: uncle_reward
     }
   end
 
