@@ -145,41 +145,7 @@ defmodule Explorer.Chain.Block do
     _ -> ""
   end}
   """
-  @type t :: %__MODULE__{
-          unquote_splicing(@rootstock_fields),
-          consensus: boolean(),
-          difficulty: difficulty(),
-          gas_limit: Gas.t(),
-          gas_used: Gas.t(),
-          hash: Hash.Full.t(),
-          miner: %Ecto.Association.NotLoaded{} | Address.t(),
-          miner_hash: Hash.Address.t(),
-          nonce: Hash.Nonce.t(),
-          number: block_number(),
-          parent_hash: Hash.t(),
-          size: non_neg_integer(),
-          timestamp: DateTime.t(),
-          total_difficulty: difficulty(),
-          transactions: %Ecto.Association.NotLoaded{} | [Transaction.t()],
-          refetch_needed: boolean(),
-          base_fee_per_gas: Wei.t(),
-          is_empty: boolean()
-        }
-
-  @primary_key {:hash, Hash.Full, autogenerate: false}
-  schema "blocks" do
-    field(:consensus, :boolean)
-    field(:difficulty, :decimal)
-    field(:gas_limit, :decimal)
-    field(:gas_used, :decimal)
-    field(:nonce, Hash.Nonce)
-    field(:number, :integer)
-    field(:size, :integer)
-    field(:timestamp, :utc_datetime_usec)
-    field(:total_difficulty, :decimal)
-    field(:refetch_needed, :boolean)
-    field(:base_fee_per_gas, Wei)
-    field(:is_empty, :boolean)
+  Explorer.Chain.Block.Schema.generate()
 
     if Application.compile_env(:explorer, :chain_type) == "rsk" do
       field(:bitcoin_merged_mining_header, :binary)
