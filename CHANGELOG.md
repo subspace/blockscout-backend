@@ -5,6 +5,7 @@
 ### Features
 
 - [#9403](https://github.com/blockscout/blockscout/pull/9403) - Null round handling
+- [#9401](https://github.com/blockscout/blockscout/pull/9401) - Eliminate incorrect token transfers with empty token_ids
 - [#9396](https://github.com/blockscout/blockscout/pull/9396) - More-Minimal Proxy support
 - [#9386](https://github.com/blockscout/blockscout/pull/9386) - Filecoin JSON RPC variant
 - [#9379](https://github.com/blockscout/blockscout/pull/9379) - Filter non-traceable transactions for zetachain
