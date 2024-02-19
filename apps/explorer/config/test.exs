@@ -49,7 +49,8 @@ for repo <- [
       Explorer.Repo.RSK,
       Explorer.Repo.Shibarium,
       Explorer.Repo.Suave,
-      Explorer.Repo.BridgedTokens
+      Explorer.Repo.BridgedTokens,
+      Explorer.Repo.Filecoin
     ] do
   config :explorer, repo,
     database: "explorer_test",
