@@ -7,11 +7,6 @@ services:
       file: ./services/docker-compose-redis.yml
       service: redis_db
 
-  db-init:
-    extends:
-      file: ./services/docker-compose-db.yml
-      service: db-init
-
   db:
     extends:
       file: ./services/docker-compose-db.yml
