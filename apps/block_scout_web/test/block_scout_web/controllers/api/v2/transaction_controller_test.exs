@@ -8,6 +8,13 @@ defmodule BlockScoutWeb.API.V2.TransactionControllerTest do
   alias Explorer.Chain.{Address, InternalTransaction, Log, Token, TokenTransfer, Transaction}
   alias Explorer.Repo
 
+  @first_topic_hex_string_1 "0x99e7b0ba56da2819c37c047f0511fd2bf6c9b4e27b4a979a19d6da0f74be8155"
+
+  defp topic(topic_hex_string) do
+    {:ok, topic} = Explorer.Chain.Hash.Full.cast(topic_hex_string)
+    topic
+  end
+
   setup do
     Supervisor.terminate_child(Explorer.Supervisor, Explorer.Chain.Cache.TransactionsApiV2.child_id())
     Supervisor.restart_child(Explorer.Supervisor, Explorer.Chain.Cache.TransactionsApiV2.child_id())
@@ -238,6 +245,7 @@ defmodule BlockScoutWeb.API.V2.TransactionControllerTest do
         block_number: tx.block_number,
         token_contract_address: token.contract_address,
         token_ids: Enum.map(0..50, fn x -> x end),
+        token_type: "ERC-1155",
         amounts: Enum.map(0..50, fn x -> x end)
       )
 
@@ -264,6 +272,7 @@ defmodule BlockScoutWeb.API.V2.TransactionControllerTest do
           block_number: tx.block_number,
           token_contract_address: token.contract_address,
           token_ids: [1],
+          token_type: "ERC-1155",
           amounts: [2],
           amount: nil
         )
@@ -574,7 +583,8 @@ defmodule BlockScoutWeb.API.V2.TransactionControllerTest do
             block: tx.block,
             block_number: tx.block_number,
             token_contract_address: erc_1155_token.contract_address,
-            token_ids: [x]
+            token_ids: [x],
+            token_type: "ERC-1155"
           )
         end
         |> Enum.reverse()
@@ -588,7 +598,8 @@ defmodule BlockScoutWeb.API.V2.TransactionControllerTest do
             block: tx.block,
             block_number: tx.block_number,
             token_contract_address: erc_721_token.contract_address,
-            token_ids: [x]
+            token_ids: [x],
+            token_type: "ERC-721"
           )
         end
         |> Enum.reverse()
@@ -601,7 +612,8 @@ defmodule BlockScoutWeb.API.V2.TransactionControllerTest do
             transaction: tx,
             block: tx.block,
             block_number: tx.block_number,
-            token_contract_address: erc_20_token.contract_address
+            token_contract_address: erc_20_token.contract_address,
+            token_type: "ERC-20"
           )
         end
         |> Enum.reverse()
@@ -716,6 +728,7 @@ defmodule BlockScoutWeb.API.V2.TransactionControllerTest do
             block_number: tx.block_number,
             token_contract_address: token.contract_address,
             token_ids: Enum.map(0..50, fn _x -> id end),
+            token_type: "ERC-1155",
             amounts: Enum.map(0..50, fn x -> x end)
           )
         end
@@ -751,7 +764,8 @@ defmodule BlockScoutWeb.API.V2.TransactionControllerTest do
             block: tx.block,
             block_number: tx.block_number,
             token_contract_address: token.contract_address,
-            token_ids: [i]
+            token_ids: [i],
+            token_type: "ERC-721"
           )
         end
 
@@ -781,6 +795,7 @@ defmodule BlockScoutWeb.API.V2.TransactionControllerTest do
           block_number: tx.block_number,
           token_contract_address: token.contract_address,
           token_ids: Enum.map(0..50, fn x -> x end),
+          token_type: "ERC-1155",
           amounts: Enum.map(0..50, fn x -> x end)
         )
 
@@ -816,6 +831,7 @@ defmodule BlockScoutWeb.API.V2.TransactionControllerTest do
           block_number: tx.block_number,
           token_contract_address: token.contract_address,
           token_ids: Enum.map(0..24, fn x -> x end),
+          token_type: "ERC-1155",
           amounts: Enum.map(0..24, fn x -> x end)
         )
 
@@ -831,6 +847,7 @@ defmodule BlockScoutWeb.API.V2.TransactionControllerTest do
           block_number: tx.block_number,
           token_contract_address: token.contract_address,
           token_ids: Enum.map(25..49, fn x -> x end),
+          token_type: "ERC-1155",
           amounts: Enum.map(25..49, fn x -> x end)
         )
 
@@ -846,6 +863,7 @@ defmodule BlockScoutWeb.API.V2.TransactionControllerTest do
           block_number: tx.block_number,
           token_contract_address: token.contract_address,
           token_ids: [50],
+          token_type: "ERC-1155",
           amounts: [50]
         )
 
@@ -872,6 +890,7 @@ defmodule BlockScoutWeb.API.V2.TransactionControllerTest do
           block_number: tx.block_number,
           token_contract_address: token.contract_address,
           token_ids: Enum.map(0..24, fn x -> x end),
+          token_type: "ERC-1155",
           amounts: Enum.map(0..24, fn x -> x end)
         )
 
@@ -887,6 +906,7 @@ defmodule BlockScoutWeb.API.V2.TransactionControllerTest do
           block_number: tx.block_number,
           token_contract_address: token.contract_address,
           token_ids: Enum.map(25..50, fn x -> x end),
+          token_type: "ERC-1155",
           amounts: Enum.map(25..50, fn x -> x end)
         )
 
@@ -970,13 +990,13 @@ defmodule BlockScoutWeb.API.V2.TransactionControllerTest do
     test "check stability fees", %{conn: conn} do
       tx = insert(:transaction) |> with_block()
 
-      log =
+      _log =
         insert(:log,
           transaction: tx,
           index: 1,
           block: tx.block,
           block_number: tx.block_number,
-          first_topic: "0x99e7b0ba56da2819c37c047f0511fd2bf6c9b4e27b4a979a19d6da0f74be8155",
+          first_topic: topic(@first_topic_hex_string_1),
           data:
             "0x000000000000000000000000dc2b93f3291030f3f7a6d9363ac37757f7ad5c4300000000000000000000000000000000000000000000000000002824369a100000000000000000000000000046b555cb3962bf9533c437cbd04a2f702dfdb999000000000000000000000000000000000000000000000000000014121b4d0800000000000000000000000000faf7a981360c2fab3a5ab7b3d6d8d0cf97a91eb9000000000000000000000000000000000000000000000000000014121b4d0800"
         )
@@ -1033,13 +1053,13 @@ defmodule BlockScoutWeb.API.V2.TransactionControllerTest do
     test "check stability if token absent in DB", %{conn: conn} do
       tx = insert(:transaction) |> with_block()
 
-      log =
+      _log =
         insert(:log,
           transaction: tx,
           index: 1,
           block: tx.block,
           block_number: tx.block_number,
-          first_topic: "0x99e7b0ba56da2819c37c047f0511fd2bf6c9b4e27b4a979a19d6da0f74be8155",
+          first_topic: topic(@first_topic_hex_string_1),
           data:
             "0x000000000000000000000000dc2b93f3291030f3f7a6d9363ac37757f7ad5c4300000000000000000000000000000000000000000000000000002824369a100000000000000000000000000046b555cb3962bf9533c437cbd04a2f702dfdb999000000000000000000000000000000000000000000000000000014121b4d0800000000000000000000000000faf7a981360c2fab3a5ab7b3d6d8d0cf97a91eb9000000000000000000000000000000000000000000000000000014121b4d0800"
         )

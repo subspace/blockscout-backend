@@ -32,11 +32,13 @@ defmodule BlockScoutWeb.TransactionView do
   defdelegate formatted_timestamp(block), to: BlockView
 
   def block_number(%Transaction{block_number: nil}), do: gettext("Block Pending")
-  def block_number(%Transaction{block: block}), do: [view_module: BlockView, partial: "_link.html", block: block]
+
+  def block_number(%Transaction{block_number: number, block_hash: hash}),
+    do: [view_module: BlockView, partial: "_link.html", block: %Block{number: number, hash: hash}]
+
   def block_number(%Reward{block: block}), do: [view_module: BlockView, partial: "_link.html", block: block]
 
-  def block_timestamp(%Transaction{block_number: nil, inserted_at: time}), do: time
-  def block_timestamp(%Transaction{block: %Block{timestamp: time}}), do: time
+  def block_timestamp(%Transaction{} = transaction), do: Transaction.block_timestamp(transaction)
   def block_timestamp(%Reward{block: %Block{timestamp: time}}), do: time
 
   def value_transfer?(%Transaction{input: %{bytes: bytes}}) when bytes in [<<>>, nil] do
@@ -146,6 +148,7 @@ defmodule BlockScoutWeb.TransactionView do
       amount: nil,
       amounts: [],
       token_ids: token_transfer.token_ids,
+      token_type: token_transfer.token_type,
       to_address_hash: token_transfer.to_address_hash,
       from_address_hash: token_transfer.from_address_hash
     }
@@ -160,6 +163,7 @@ defmodule BlockScoutWeb.TransactionView do
       amount: nil,
       amounts: amounts,
       token_ids: token_transfer.token_ids,
+      token_type: token_transfer.token_type,
       to_address_hash: token_transfer.to_address_hash,
       from_address_hash: token_transfer.from_address_hash
     }
@@ -173,6 +177,7 @@ defmodule BlockScoutWeb.TransactionView do
       amount: token_transfer.amount,
       amounts: [],
       token_ids: token_transfer.token_ids,
+      token_type: token_transfer.token_type,
       to_address_hash: token_transfer.to_address_hash,
       from_address_hash: token_transfer.from_address_hash
     }
@@ -308,7 +313,7 @@ defmodule BlockScoutWeb.TransactionView do
   def contract_creation?(_), do: false
 
   def fee(%Transaction{} = transaction) do
-    {_, value} = Chain.fee(transaction, :wei)
+    {_, value} = Transaction.fee(transaction, :wei)
     value
   end
 
@@ -318,7 +323,7 @@ defmodule BlockScoutWeb.TransactionView do
 
   def formatted_fee(%Transaction{} = transaction, opts) do
     transaction
-    |> Chain.fee(:wei)
+    |> Transaction.fee(:wei)
     |> fee_to_denomination(opts)
     |> case do
       {:actual, value} -> value

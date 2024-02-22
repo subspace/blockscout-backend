@@ -21,6 +21,7 @@ defmodule Explorer.Factory do
   }
 
   alias Explorer.Admin.Administrator
+  alias Explorer.Chain.Beacon.{Blob, BlobTransaction}
   alias Explorer.Chain.Block.{EmissionReward, Range, Reward}
 
   alias Explorer.Chain.{
@@ -38,6 +39,7 @@ defmodule Explorer.Factory do
     Log,
     PendingBlockOperation,
     SmartContract,
+    SmartContractAdditionalSource,
     Token,
     TokenTransfer,
     Token.Instance,
@@ -533,7 +535,7 @@ defmodule Explorer.Factory do
         %Transaction{index: nil} = transaction,
         # The `transaction.block` must be consensus.  Non-consensus blocks can only be associated with the
         # `transaction_forks`.
-        %Block{consensus: true, hash: block_hash, number: block_number},
+        %Block{consensus: true, hash: block_hash, number: block_number, timestamp: timestamp},
         collated_params
       )
       when is_list(collated_params) do
@@ -542,6 +544,8 @@ defmodule Explorer.Factory do
     cumulative_gas_used = collated_params[:cumulative_gas_used] || Enum.random(21_000..100_000)
     gas_used = collated_params[:gas_used] || Enum.random(21_000..100_000)
     status = Keyword.get(collated_params, :status, Enum.random([:ok, :error]))
+    block_timestamp = Keyword.get(collated_params, :block_timestamp, timestamp)
+    block_consensus = Keyword.get(collated_params, :block_consensus, true)
 
     error = (status == :error && collated_params[:error]) || nil
 
@@ -555,7 +559,9 @@ defmodule Explorer.Factory do
       error: error,
       gas_used: gas_used,
       index: next_transaction_index,
-      status: status
+      status: status,
+      block_timestamp: block_timestamp,
+      block_consensus: block_consensus
     })
     |> Repo.update!()
     |> Repo.preload(:block)
@@ -675,8 +681,7 @@ defmodule Explorer.Factory do
       index: sequence("log_index", & &1),
       second_topic: nil,
       third_topic: nil,
-      transaction: build(:transaction),
-      type: sequence("0x")
+      transaction: build(:transaction)
     }
   end
 
@@ -743,7 +748,7 @@ defmodule Explorer.Factory do
     contract_code = Map.fetch!(contract_code_info(), :bytecode)
 
     token_address = insert(:contract_address, contract_code: contract_code)
-    insert(:token, contract_address: token_address)
+    token = insert(:token, contract_address: token_address)
 
     %TokenTransfer{
       block: build(:block),
@@ -752,8 +757,10 @@ defmodule Explorer.Factory do
       from_address: from_address,
       to_address: to_address,
       token_contract_address: token_address,
+      token_type: token.type,
       transaction: log.transaction,
-      log_index: log.index
+      log_index: log.index,
+      block_consensus: true
     }
   end
 
@@ -807,7 +814,8 @@ defmodule Explorer.Factory do
       s: sequence(:transaction_s, & &1),
       to_address: build(:address),
       v: Enum.random(27..30),
-      value: Enum.random(1..100_000)
+      value: Enum.random(1..100_000),
+      block_timestamp: DateTime.utc_now()
     }
   end
 
@@ -870,6 +878,10 @@ defmodule Explorer.Factory do
     }
   end
 
+  def smart_contract_additional_source_factory do
+    %SmartContractAdditionalSource{}
+  end
+
   def unique_smart_contract_factory do
     Map.replace(smart_contract_factory(), :name, sequence("SimpleStorage"))
   end
@@ -888,8 +900,14 @@ defmodule Explorer.Factory do
     %Instance{
       token_contract_address_hash: insert(:token).contract_address_hash,
       token_id: sequence("token_id", & &1),
-      metadata: %{key: "value"},
-      error: nil
+      metadata: %{
+        "key" => sequence("value"),
+        "image_url" => sequence("image_url"),
+        "animation_url" => sequence("image_url"),
+        "external_url" => sequence("external_url")
+      },
+      error: nil,
+      owner_address_hash: insert(:address).hash
     }
   end
 
@@ -935,6 +953,41 @@ defmodule Explorer.Factory do
     %CurrentTokenBalance{
       address: build(:address),
       token_contract_address_hash: insert(:token, type: token_type).contract_address_hash,
+      block_number: block_number(),
+      value: Enum.random(1_000_000_000_000_000_000..10_000_000_000_000_000_000),
+      value_fetched_at: DateTime.utc_now(),
+      token_id: token_id,
+      token_type: token_type
+    }
+  end
+
+  def address_current_token_balance_with_token_id_and_fixed_token_type_factory(%{
+        token_type: token_type,
+        address: address,
+        token_id: token_id,
+        token_contract_address_hash: token_contract_address_hash,
+        value: value
+      }) do
+    %CurrentTokenBalance{
+      address: address,
+      token_contract_address_hash: token_contract_address_hash,
+      block_number: block_number(),
+      value: value,
+      value_fetched_at: DateTime.utc_now(),
+      token_id: token_id,
+      token_type: token_type
+    }
+  end
+
+  def address_current_token_balance_with_token_id_and_fixed_token_type_factory(%{
+        token_type: token_type,
+        address: address,
+        token_id: token_id,
+        token_contract_address_hash: token_contract_address_hash
+      }) do
+    %CurrentTokenBalance{
+      address: address,
+      token_contract_address_hash: token_contract_address_hash,
       block_number: block_number(),
       value: Enum.random(1_000_000_000_000_000_000..10_000_000_000_000_000_000),
       value_fetched_at: DateTime.utc_now(),
@@ -1039,6 +1092,27 @@ defmodule Explorer.Factory do
 
   def withdrawal_validator_index do
     sequence("withdrawal_validator_index", & &1)
+  end
+
+  def blob_factory do
+    kzg_commitment = data(:kzg_commitment)
+
+    %Blob{
+      hash: Blob.hash(kzg_commitment.bytes),
+      blob_data: data(:blob_data),
+      kzg_commitment: kzg_commitment,
+      kzg_proof: data(:kzg_proof)
+    }
+  end
+
+  def blob_transaction_factory do
+    %BlobTransaction{
+      hash: insert(:transaction) |> with_block() |> Map.get(:hash),
+      max_fee_per_blob_gas: Decimal.new(1_000_000_000),
+      blob_gas_price: Decimal.new(1_000_000_000),
+      blob_gas_used: Decimal.new(131_072),
+      blob_versioned_hashes: []
+    }
   end
 
   def random_bool, do: Enum.random([true, false])

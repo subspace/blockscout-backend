@@ -6,6 +6,335 @@
 
 ### Fixes
 
+### Chore
+
+<details>
+  <summary>Dependencies version bumps</summary>
+
+</details>
+
+## 6.2.0
+
+### Features
+
+- [#9441](https://github.com/blockscout/blockscout/pull/9441) - Update BENS integration: change endpoint for resolving address in search
+- [#9437](https://github.com/blockscout/blockscout/pull/9437) - Add Enum.uniq before sanitizing token transfers
+- [#9403](https://github.com/blockscout/blockscout/pull/9403) - Null round handling
+- [#9401](https://github.com/blockscout/blockscout/pull/9401) - Eliminate incorrect token transfers with empty token_ids
+- [#9396](https://github.com/blockscout/blockscout/pull/9396) - More-Minimal Proxy support
+- [#9386](https://github.com/blockscout/blockscout/pull/9386) - Filecoin JSON RPC variant
+- [#9379](https://github.com/blockscout/blockscout/pull/9379) - Filter non-traceable transactions for zetachain
+- [#9364](https://github.com/blockscout/blockscout/pull/9364) - Fix using of startblock/endblock in API v1 list endpoints: txlist, txlistinternal, tokentx
+- [#9360](https://github.com/blockscout/blockscout/pull/9360) - Move missing ranges sanitize to a separate background migration
+- [#9351](https://github.com/blockscout/blockscout/pull/9351) - Noves.fi: add proxy endpoint for describeTxs endpoint
+- [#9282](https://github.com/blockscout/blockscout/pull/9282) - Add `license_type` to smart contracts
+- [#9202](https://github.com/blockscout/blockscout/pull/9202) - Add base and priority fee to gas oracle response
+- [#9182](https://github.com/blockscout/blockscout/pull/9182) - Fetch coin balances in async mode in realtime fetcher
+- [#9168](https://github.com/blockscout/blockscout/pull/9168) - Support EIP4844 blobs indexing & API
+- [#9098](https://github.com/blockscout/blockscout/pull/9098) - Polygon zkEVM Bridge indexer and API v2 extension
+
+### Fixes
+
+- [#9444](https://github.com/blockscout/blockscout/pull/9444) - Fix quick search bug
+- [#9440](https://github.com/blockscout/blockscout/pull/9440) - Add `debug_traceBlockByNumber` to `method_to_url`
+- [#9387](https://github.com/blockscout/blockscout/pull/9387) - Filter out Vyper contracts in Solidityscan API endpoint
+- [#9377](https://github.com/blockscout/blockscout/pull/9377) - Speed up account abstraction proxy
+- [#9371](https://github.com/blockscout/blockscout/pull/9371) - Filter empty values before token update
+- [#9356](https://github.com/blockscout/blockscout/pull/9356) - Remove ERC-1155 logs params from coin balances params
+- [#9346](https://github.com/blockscout/blockscout/pull/9346) - Process integer balance in genesis.json
+- [#9317](https://github.com/blockscout/blockscout/pull/9317) - Include null gas price txs in fee calculations
+- [#9315](https://github.com/blockscout/blockscout/pull/9315) - Fix manual uncle reward calculation
+- [#9306](https://github.com/blockscout/blockscout/pull/9306) - Improve marking of failed internal transactions
+- [#9305](https://github.com/blockscout/blockscout/pull/9305) - Add effective gas price calculation as fallback
+- [#9300](https://github.com/blockscout/blockscout/pull/9300) - Fix read contract bug
+- [#9226](https://github.com/blockscout/blockscout/pull/9226) - Split Indexer.Fetcher.TokenInstance.LegacySanitize
+
+### Chore
+
+- [#9439](https://github.com/blockscout/blockscout/pull/9439) - Solidityscan integration enhancements
+- [#9398](https://github.com/blockscout/blockscout/pull/9398) - Improve elixir dependencies caching in CI
+- [#9393](https://github.com/blockscout/blockscout/pull/9393) - Bump actions/cache to v4
+- [#9389](https://github.com/blockscout/blockscout/pull/9389) - Output user address as an object in API v2 for Shibarium
+- [#9361](https://github.com/blockscout/blockscout/pull/9361) - Define BRIDGED_TOKENS_ENABLED env in Dockerfile
+- [#9257](https://github.com/blockscout/blockscout/pull/9257) - Retry token instance metadata fetch from baseURI + tokenID
+- [#8851](https://github.com/blockscout/blockscout/pull/8851) - Fix dialyzer and add TypedEctoSchema
+
+<details>
+  <summary>Dependencies version bumps</summary>
+
+- [#9335](https://github.com/blockscout/blockscout/pull/9335) - Bump mini-css-extract-plugin from 2.7.7 to 2.8.0 in /apps/block_scout_web/assets
+- [#9333](https://github.com/blockscout/blockscout/pull/9333) - Bump sweetalert2 from 11.10.3 to 11.10.5 in /apps/block_scout_web/assets
+- [#9288](https://github.com/blockscout/blockscout/pull/9288) - Bump solc from 0.8.23 to 0.8.24 in /apps/explorer
+- [#9287](https://github.com/blockscout/blockscout/pull/9287) - Bump @babel/preset-env from 7.23.8 to 7.23.9 in /apps/block_scout_web/assets
+- [#9331](https://github.com/blockscout/blockscout/pull/9331) - Bump logger_json from 5.1.2 to 5.1.3
+- [#9330](https://github.com/blockscout/blockscout/pull/9330) - Bump hammer from 6.1.0 to 6.2.0
+- [#9294](https://github.com/blockscout/blockscout/pull/9294) - Bump exvcr from 0.15.0 to 0.15.1
+- [#9293](https://github.com/blockscout/blockscout/pull/9293) - Bump floki from 0.35.2 to 0.35.3
+- [#9338](https://github.com/blockscout/blockscout/pull/9338) - Bump postcss-loader from 8.0.0 to 8.1.0 in /apps/block_scout_web/assets
+- [#9336](https://github.com/blockscout/blockscout/pull/9336) - Bump web3 from 1.10.3 to 1.10.4 in /apps/block_scout_web/assets
+- [#9290](https://github.com/blockscout/blockscout/pull/9290) - Bump ex_doc from 0.31.0 to 0.31.1
+- [#9285](https://github.com/blockscout/blockscout/pull/9285) - Bump @amplitude/analytics-browser from 2.3.8 to 2.4.0 in /apps/block_scout_web/assets
+- [#9283](https://github.com/blockscout/blockscout/pull/9283) - Bump @babel/core from 7.23.7 to 7.23.9 in /apps/block_scout_web/assets
+- [#9337](https://github.com/blockscout/blockscout/pull/9337) - Bump css-loader from 6.9.1 to 6.10.0 in /apps/block_scout_web/assets
+- [#9334](https://github.com/blockscout/blockscout/pull/9334) - Bump sass-loader from 14.0.0 to 14.1.0 in /apps/block_scout_web/assets
+- [#9339](https://github.com/blockscout/blockscout/pull/9339) - Bump webpack from 5.89.0 to 5.90.1 in /apps/block_scout_web/assets
+- [#9383](https://github.com/blockscout/blockscout/pull/9383) - Bump credo from 1.7.3 to 1.7.4
+- [#9384](https://github.com/blockscout/blockscout/pull/9384) - Bump postcss from 8.4.33 to 8.4.35 in /apps/block_scout_web/assets
+- [#9385](https://github.com/blockscout/blockscout/pull/9385) - Bump mixpanel-browser from 2.48.1 to 2.49.0 in /apps/block_scout_web/assets
+- [#9423](https://github.com/blockscout/blockscout/pull/9423) - Bump @amplitude/analytics-browser from 2.4.0 to 2.4.1 in /apps/block_scout_web/assets
+- [#9422](https://github.com/blockscout/blockscout/pull/9422) - Bump core-js from 3.35.1 to 3.36.0 in /apps/block_scout_web/assets
+- [#9424](https://github.com/blockscout/blockscout/pull/9424) - Bump webpack from 5.90.1 to 5.90.3 in /apps/block_scout_web/assets
+- [#9425](https://github.com/blockscout/blockscout/pull/9425) - Bump sass-loader from 14.1.0 to 14.1.1 in /apps/block_scout_web/assets
+- [#9421](https://github.com/blockscout/blockscout/pull/9421) - Bump sass from 1.70.0 to 1.71.0 in /apps/block_scout_web/assets
+</details>
+
+## 6.1.0
+
+### Features
+
+- [#9189](https://github.com/blockscout/blockscout/pull/9189) - User operations in the search
+- [#9169](https://github.com/blockscout/blockscout/pull/9169) - Add bridged tokens functionality to master branch
+- [#9158](https://github.com/blockscout/blockscout/pull/9158) - Increase shared memory for PostgreSQL containers
+- [#9155](https://github.com/blockscout/blockscout/pull/9155) - Allow bypassing avg block time in proxy implementation re-fetch ttl calculation
+- [#9148](https://github.com/blockscout/blockscout/pull/9148) - Add `/api/v2/utils/decode-calldata`
+- [#9145](https://github.com/blockscout/blockscout/pull/9145), [#9309](https://github.com/blockscout/blockscout/pull/9309) - Proxy for Account abstraction microservice
+- [#9132](https://github.com/blockscout/blockscout/pull/9132) - Fetch token image from CoinGecko
+- [#9131](https://github.com/blockscout/blockscout/pull/9131) - Merge addresses stage with address referencing
+- [#9120](https://github.com/blockscout/blockscout/pull/9120) - Add GET and POST `/api/v2/smart-contracts/:address_hash/audit-reports`
+- [#9072](https://github.com/blockscout/blockscout/pull/9072) - Add tracing by block logic for geth
+- [#9185](https://github.com/blockscout/blockscout/pull/9185), [#9068](https://github.com/blockscout/blockscout/pull/9068) - New RPC API v1 endpoints
+- [#9056](https://github.com/blockscout/blockscout/pull/9056) - Noves.fi API proxy
+
+### Fixes
+
+- [#9275](https://github.com/blockscout/blockscout/pull/9275) - Tx summary endpoint fixes
+- [#9261](https://github.com/blockscout/blockscout/pull/9261) - Fix pending transactions sanitizer
+- [#9253](https://github.com/blockscout/blockscout/pull/9253) - Don't fetch first trace for pending transactions
+- [#9241](https://github.com/blockscout/blockscout/pull/9241) - Fix log decoding bug
+- [#9234](https://github.com/blockscout/blockscout/pull/9234) - Add missing filters by non-pending transactions
+- [#9229](https://github.com/blockscout/blockscout/pull/9229) - Add missing filter to txlist query
+- [#9195](https://github.com/blockscout/blockscout/pull/9195) - API v1 allow multiple slashes in the path before "api"
+- [#9187](https://github.com/blockscout/blockscout/pull/9187) - Fix Internal Server Error on request for nonexistent token instance
+- [#9178](https://github.com/blockscout/blockscout/pull/9178) - Change internal txs tracer type to opcode for Hardhat node
+- [#9173](https://github.com/blockscout/blockscout/pull/9173) - Exclude genesis block from average block time calculation
+- [#9143](https://github.com/blockscout/blockscout/pull/9143) - Handle nil token_ids in token transfers on render
+- [#9139](https://github.com/blockscout/blockscout/pull/9139) - TokenBalanceOnDemand fixes
+- [#9125](https://github.com/blockscout/blockscout/pull/9125) - Fix Explorer.Chain.Cache.GasPriceOracle.merge_fees
+- [#9124](https://github.com/blockscout/blockscout/pull/9124) - EIP-1167 display multiple sources of implementation
+- [#9110](https://github.com/blockscout/blockscout/pull/9110) - Improve update_in in gas tracker
+- [#9109](https://github.com/blockscout/blockscout/pull/9109) - Return current exchange rate in api/v2/stats
+- [#9102](https://github.com/blockscout/blockscout/pull/9102) - Fix some log topics for Suave and Polygon Edge
+- [#9075](https://github.com/blockscout/blockscout/pull/9075) - Fix fetching contract codes
+- [#9073](https://github.com/blockscout/blockscout/pull/9073) - Allow payable function with output appear in the Read tab
+- [#9069](https://github.com/blockscout/blockscout/pull/9069) - Fetch realtime coin balances only for addresses for which it has changed
+
+### Chore
+
+- [#9323](https://github.com/blockscout/blockscout/pull/9323) - Change index creation to concurrent
+- [#9322](https://github.com/blockscout/blockscout/pull/9322) - Create repo setup actions
+- [#9303](https://github.com/blockscout/blockscout/pull/9303) - Add workflow for Shibarium
+- [#9233](https://github.com/blockscout/blockscout/pull/9233) - "cataloged" index on tokens table
+- [#9198](https://github.com/blockscout/blockscout/pull/9198) - Make Postgres@15 default option
+- [#9197](https://github.com/blockscout/blockscout/pull/9197) - Add `MARKET_HISTORY_FETCH_INTERVAL` env
+- [#9196](https://github.com/blockscout/blockscout/pull/9196) - Compatibility with docker-compose 2.24
+- [#9193](https://github.com/blockscout/blockscout/pull/9193) - Equalize elixir stack versions
+- [#9153](https://github.com/blockscout/blockscout/pull/9153) - Enhanced unfetched token balances index
+
+<details>
+  <summary>Dependencies version bumps</summary>
+
+- [#9119](https://github.com/blockscout/blockscout/pull/9119) - Bump sass from 1.69.6 to 1.69.7 in /apps/block_scout_web/assets
+- [#9126](https://github.com/blockscout/blockscout/pull/9126) - Bump follow-redirects from 1.14.8 to 1.15.4 in /apps/explorer
+- [#9116](https://github.com/blockscout/blockscout/pull/9116) - Bump ueberauth from 0.10.5 to 0.10.7
+- [#9118](https://github.com/blockscout/blockscout/pull/9118) - Bump postcss from 8.4.32 to 8.4.33 in /apps/block_scout_web/assets
+- [#9161](https://github.com/blockscout/blockscout/pull/9161) - Bump sass-loader from 13.3.3 to 14.0.0 in /apps/block_scout_web/assets
+- [#9160](https://github.com/blockscout/blockscout/pull/9160) - Bump copy-webpack-plugin from 11.0.0 to 12.0.1 in /apps/block_scout_web/assets
+- [#9165](https://github.com/blockscout/blockscout/pull/9165) - Bump sweetalert2 from 11.10.2 to 11.10.3 in /apps/block_scout_web/assets
+- [#9163](https://github.com/blockscout/blockscout/pull/9163) - Bump mini-css-extract-plugin from 2.7.6 to 2.7.7 in /apps/block_scout_web/assets
+- [#9159](https://github.com/blockscout/blockscout/pull/9159) - Bump @babel/preset-env from 7.23.7 to 7.23.8 in /apps/block_scout_web/assets
+- [#9162](https://github.com/blockscout/blockscout/pull/9162) - Bump style-loader from 3.3.3 to 3.3.4 in /apps/block_scout_web/assets
+- [#9164](https://github.com/blockscout/blockscout/pull/9164) - Bump css-loader from 6.8.1 to 6.9.0 in /apps/block_scout_web/assets
+- [#8686](https://github.com/blockscout/blockscout/pull/8686) - Bump dialyxir from 1.4.1 to 1.4.2
+- [#8861](https://github.com/blockscout/blockscout/pull/8861) - Bump briefly from 51dfe7f to 4836ba3
+- [#9117](https://github.com/blockscout/blockscout/pull/9117) - Bump credo from 1.7.1 to 1.7.3
+- [#9222](https://github.com/blockscout/blockscout/pull/9222) - Bump dialyxir from 1.4.2 to 1.4.3
+- [#9219](https://github.com/blockscout/blockscout/pull/9219) - Bump sass from 1.69.7 to 1.70.0 in /apps/block_scout_web/assets
+- [#9224](https://github.com/blockscout/blockscout/pull/9224) - Bump ex_cldr_numbers from 2.32.3 to 2.32.4
+- [#9220](https://github.com/blockscout/blockscout/pull/9220) - Bump copy-webpack-plugin from 12.0.1 to 12.0.2 in /apps/block_scout_web/assets
+- [#9216](https://github.com/blockscout/blockscout/pull/9216) - Bump core-js from 3.35.0 to 3.35.1 in /apps/block_scout_web/assets
+- [#9218](https://github.com/blockscout/blockscout/pull/9218) - Bump postcss-loader from 7.3.4 to 8.0.0 in /apps/block_scout_web/assets
+- [#9223](https://github.com/blockscout/blockscout/pull/9223) - Bump plug_cowboy from 2.6.1 to 2.6.2
+- [#9217](https://github.com/blockscout/blockscout/pull/9217) - Bump css-loader from 6.9.0 to 6.9.1 in /apps/block_scout_web/assets
+- [#9215](https://github.com/blockscout/blockscout/pull/9215) - Bump css-minimizer-webpack-plugin from 5.0.1 to 6.0.0 in /apps/block_scout_web/assets
+- [#9221](https://github.com/blockscout/blockscout/pull/9221) - Bump autoprefixer from 10.4.16 to 10.4.17 in /apps/block_scout_web/assets
+
+</details>
+
+## 6.0.0
+
+### Features
+
+- [#9112](https://github.com/blockscout/blockscout/pull/9112) - Add specific url for eth_call
+- [#9044](https://github.com/blockscout/blockscout/pull/9044) - Expand gas price oracle functionality
+
+### Fixes
+
+- [#9113](https://github.com/blockscout/blockscout/pull/9113) - Fix migrators cache updating
+- [#9101](https://github.com/blockscout/blockscout/pull/9101) - Fix migration_finished? logic
+- [#9062](https://github.com/blockscout/blockscout/pull/9062) - Fix blockscout-ens integration
+- [#9061](https://github.com/blockscout/blockscout/pull/9061) - Arbitrum allow tx receipt gasUsedForL1 field
+- [#8812](https://github.com/blockscout/blockscout/pull/8812) - Update existing tokens type if got transfer with higher type priority
+
+### Chore
+
+- [#9055](https://github.com/blockscout/blockscout/pull/9055) - Add ASC indices for logs, token transfers, transactions
+- [#9038](https://github.com/blockscout/blockscout/pull/9038) - Token type filling migrations
+- [#9009](https://github.com/blockscout/blockscout/pull/9009) - Index for block refetch_needed
+- [#9007](https://github.com/blockscout/blockscout/pull/9007) - Drop logs type index
+- [#9006](https://github.com/blockscout/blockscout/pull/9006) - Drop unused indexes on address_current_token_balances table
+- [#9005](https://github.com/blockscout/blockscout/pull/9005) - Drop unused token_id column from token_transfers table and indexes based on this column
+- [#9000](https://github.com/blockscout/blockscout/pull/9000) - Change log topic type in the DB to bytea
+- [#8996](https://github.com/blockscout/blockscout/pull/8996) - Refine token transfers token ids index
+- [#8776](https://github.com/blockscout/blockscout/pull/8776) - DB denormalization: block consensus and timestamp in transaction table
+
+<details>
+  <summary>Dependencies version bumps</summary>
+
+- [#9059](https://github.com/blockscout/blockscout/pull/9059) - Bump redux from 5.0.0 to 5.0.1 in /apps/block_scout_web/assets
+- [#9057](https://github.com/blockscout/blockscout/pull/9057) - Bump benchee from 1.2.0 to 1.3.0
+- [#9060](https://github.com/blockscout/blockscout/pull/9060) - Bump @amplitude/analytics-browser from 2.3.7 to 2.3.8 in /apps/block_scout_web/assets
+- [#9084](https://github.com/blockscout/blockscout/pull/9084) - Bump @babel/preset-env from 7.23.6 to 7.23.7 in /apps/block_scout_web/assets
+- [#9083](https://github.com/blockscout/blockscout/pull/9083) - Bump @babel/core from 7.23.6 to 7.23.7 in /apps/block_scout_web/assets
+- [#9086](https://github.com/blockscout/blockscout/pull/9086) - Bump core-js from 3.34.0 to 3.35.0 in /apps/block_scout_web/assets
+- [#9081](https://github.com/blockscout/blockscout/pull/9081) - Bump sweetalert2 from 11.10.1 to 11.10.2 in /apps/block_scout_web/assets
+- [#9085](https://github.com/blockscout/blockscout/pull/9085) - Bump moment from 2.29.4 to 2.30.1 in /apps/block_scout_web/assets
+- [#9087](https://github.com/blockscout/blockscout/pull/9087) - Bump postcss-loader from 7.3.3 to 7.3.4 in /apps/block_scout_web/assets
+- [#9082](https://github.com/blockscout/blockscout/pull/9082) - Bump sass-loader from 13.3.2 to 13.3.3 in /apps/block_scout_web/assets
+- [#9088](https://github.com/blockscout/blockscout/pull/9088) - Bump sass from 1.69.5 to 1.69.6 in /apps/block_scout_web/assets
+
+</details>
+
+## 5.4.0-beta
+
+### Features
+
+- [#9018](https://github.com/blockscout/blockscout/pull/9018) - Add SmartContractRealtimeEventHandler
+- [#8997](https://github.com/blockscout/blockscout/pull/8997) - Isolate throttable error count by request method
+- [#8975](https://github.com/blockscout/blockscout/pull/8975) - Add EIP-4844 compatibility (not full support yet)
+- [#8972](https://github.com/blockscout/blockscout/pull/8972) - BENS integration
+- [#8960](https://github.com/blockscout/blockscout/pull/8960) - TRACE_BLOCK_RANGES env var
+- [#8957](https://github.com/blockscout/blockscout/pull/8957) - Add Tx Interpreter Service integration
+- [#8929](https://github.com/blockscout/blockscout/pull/8929) - Shibarium Bridge indexer and API v2 extension
+
+### Fixes
+
+- [#9039](https://github.com/blockscout/blockscout/pull/9039) - Fix tx input decoding in tx summary microservice request
+- [#9035](https://github.com/blockscout/blockscout/pull/9035) - Handle Postgrex errors on NFT import 
+- [#9015](https://github.com/blockscout/blockscout/pull/9015) - Optimize NFT owner preload
+- [#9013](https://github.com/blockscout/blockscout/pull/9013) - Speed up `Indexer.Fetcher.TokenInstance.LegacySanitize`
+- [#8969](https://github.com/blockscout/blockscout/pull/8969) - Support legacy paging options for address transaction endpoint
+- [#8965](https://github.com/blockscout/blockscout/pull/8965) - Set poll: false for internal transactions fetcher
+- [#8955](https://github.com/blockscout/blockscout/pull/8955) - Remove daily balances updating from BlockReward fetcher
+- [#8846](https://github.com/blockscout/blockscout/pull/8846) - Handle nil gas_price at address view
+
+### Chore
+
+- [#9094](https://github.com/blockscout/blockscout/pull/9094) - Improve exchange rates logging
+- [#9014](https://github.com/blockscout/blockscout/pull/9014) - Decrease amount of NFT in address collection: 15 -> 9
+- [#8994](https://github.com/blockscout/blockscout/pull/8994) - Refactor transactions event preloads
+- [#8991](https://github.com/blockscout/blockscout/pull/8991) - Manage DB queue target via runtime env var
+
+<details>
+  <summary>Dependencies version bumps</summary>
+
+- [#8986](https://github.com/blockscout/blockscout/pull/8986) - Bump chart.js from 4.4.0 to 4.4.1 in /apps/block_scout_web/assets
+- [#8982](https://github.com/blockscout/blockscout/pull/8982) - Bump ex_doc from 0.30.9 to 0.31.0
+- [#8987](https://github.com/blockscout/blockscout/pull/8987) - Bump @babel/preset-env from 7.23.5 to 7.23.6 in /apps/block_scout_web/assets
+- [#8984](https://github.com/blockscout/blockscout/pull/8984) - Bump ecto_sql from 3.11.0 to 3.11.1
+- [#8988](https://github.com/blockscout/blockscout/pull/8988) - Bump core-js from 3.33.3 to 3.34.0 in /apps/block_scout_web/assets
+- [#8980](https://github.com/blockscout/blockscout/pull/8980) - Bump exvcr from 0.14.4 to 0.15.0
+- [#8985](https://github.com/blockscout/blockscout/pull/8985) - Bump @babel/core from 7.23.5 to 7.23.6 in /apps/block_scout_web/assets
+- [#9020](https://github.com/blockscout/blockscout/pull/9020) - Bump eslint-plugin-import from 2.29.0 to 2.29.1 in /apps/block_scout_web/assets
+- [#9021](https://github.com/blockscout/blockscout/pull/9021) - Bump eslint from 8.55.0 to 8.56.0 in /apps/block_scout_web/assets
+- [#9019](https://github.com/blockscout/blockscout/pull/9019) - Bump @amplitude/analytics-browser from 2.3.6 to 2.3.7 in /apps/block_scout_web/assets
+
+</details>
+
+## 5.3.3-beta
+
+### Features
+
+- [#8966](https://github.com/blockscout/blockscout/pull/8966) - Add `ACCOUNT_WATCHLIST_NOTIFICATIONS_LIMIT_FOR_30_DAYS`
+- [#8908](https://github.com/blockscout/blockscout/pull/8908) - Solidityscan report API endpoint
+- [#8900](https://github.com/blockscout/blockscout/pull/8900) - Add Compound proxy contract pattern
+- [#8611](https://github.com/blockscout/blockscout/pull/8611) - Implement sorting of smart contracts, address transactions
+
+### Fixes
+
+- [#8959](https://github.com/blockscout/blockscout/pull/8959) - Skip failed instances in Token Instance Owner migrator
+- [#8924](https://github.com/blockscout/blockscout/pull/8924) - Delete invalid current token balances in OnDemand fetcher
+- [#8922](https://github.com/blockscout/blockscout/pull/8922) - Allow call type to be in lowercase
+- [#8917](https://github.com/blockscout/blockscout/pull/8917) - Proxy detection hotfix in API v2
+- [#8915](https://github.com/blockscout/blockscout/pull/8915) - smart-contract: delete embeds_many relation on replace
+- [#8906](https://github.com/blockscout/blockscout/pull/8906) - Fix abi encoded string argument
+- [#8898](https://github.com/blockscout/blockscout/pull/8898) - Enhance method decoding by candidates from DB
+- [#8882](https://github.com/blockscout/blockscout/pull/8882) - Change order of proxy contracts patterns detection: existing popular EIPs to the top of the list
+- [#8707](https://github.com/blockscout/blockscout/pull/8707) - Fix native coin exchange rate with `EXCHANGE_RATES_COINGECKO_COIN_ID`
+
+### Chore
+
+- [#8956](https://github.com/blockscout/blockscout/pull/8956) - Refine docker-compose config structure
+- [#8911](https://github.com/blockscout/blockscout/pull/8911) - Set client_connection_check_interval for main Postgres DB in docker-compose setup
+
+<details>
+  <summary>Dependencies version bumps</summary>
+
+- [#8863](https://github.com/blockscout/blockscout/pull/8863) - Bump core-js from 3.33.2 to 3.33.3 in /apps/block_scout_web/assets
+- [#8864](https://github.com/blockscout/blockscout/pull/8864) - Bump @amplitude/analytics-browser from 2.3.3 to 2.3.5 in /apps/block_scout_web/assets
+- [#8860](https://github.com/blockscout/blockscout/pull/8860) - Bump ecto_sql from 3.10.2 to 3.11.0
+- [#8896](https://github.com/blockscout/blockscout/pull/8896) - Bump httpoison from 2.2.0 to 2.2.1
+- [#8867](https://github.com/blockscout/blockscout/pull/8867) - Bump mixpanel-browser from 2.47.0 to 2.48.1 in /apps/block_scout_web/assets
+- [#8865](https://github.com/blockscout/blockscout/pull/8865) - Bump eslint from 8.53.0 to 8.54.0 in /apps/block_scout_web/assets
+- [#8866](https://github.com/blockscout/blockscout/pull/8866) - Bump sweetalert2 from 11.9.0 to 11.10.1 in /apps/block_scout_web/assets
+- [#8897](https://github.com/blockscout/blockscout/pull/8897) - Bump prometheus from 4.10.0 to 4.11.0
+- [#8859](https://github.com/blockscout/blockscout/pull/8859) - Bump absinthe from 1.7.5 to 1.7.6
+- [#8858](https://github.com/blockscout/blockscout/pull/8858) - Bump ex_json_schema from 0.10.1 to 0.10.2
+- [#8943](https://github.com/blockscout/blockscout/pull/8943) - Bump postgrex from 0.17.3 to 0.17.4
+- [#8939](https://github.com/blockscout/blockscout/pull/8939) - Bump @babel/core from 7.23.3 to 7.23.5 in /apps/block_scout_web/assets
+- [#8936](https://github.com/blockscout/blockscout/pull/8936) - Bump eslint from 8.54.0 to 8.55.0 in /apps/block_scout_web/assets
+- [#8940](https://github.com/blockscout/blockscout/pull/8940) - Bump photoswipe from 5.4.2 to 5.4.3 in /apps/block_scout_web/assets
+- [#8938](https://github.com/blockscout/blockscout/pull/8938) - Bump @babel/preset-env from 7.23.3 to 7.23.5 in /apps/block_scout_web/assets
+- [#8935](https://github.com/blockscout/blockscout/pull/8935) - Bump @amplitude/analytics-browser from 2.3.5 to 2.3.6 in /apps/block_scout_web/assets
+- [#8937](https://github.com/blockscout/blockscout/pull/8937) - Bump redux from 4.2.1 to 5.0.0 in /apps/block_scout_web/assets
+- [#8942](https://github.com/blockscout/blockscout/pull/8942) - Bump gettext from 0.23.1 to 0.24.0
+- [#8934](https://github.com/blockscout/blockscout/pull/8934) - Bump @fortawesome/fontawesome-free from 6.4.2 to 6.5.1 in /apps/block_scout_web/assets
+- [#8933](https://github.com/blockscout/blockscout/pull/8933) - Bump postcss from 8.4.31 to 8.4.32 in /apps/block_scout_web/assets
+
+</details>
+
+## 5.3.2-beta
+
+### Features
+
+- [#8848](https://github.com/blockscout/blockscout/pull/8848) - Add MainPageRealtimeEventHandler
+- [#8821](https://github.com/blockscout/blockscout/pull/8821) - Add new events to addresses channel: `eth_bytecode_db_lookup_started` and `smart_contract_was_not_verified`
+- [#8795](https://github.com/blockscout/blockscout/pull/8795) - Disable catchup indexer by env
+- [#8768](https://github.com/blockscout/blockscout/pull/8768) - Add possibility to search tokens by address hash
+- [#8750](https://github.com/blockscout/blockscout/pull/8750) - Support new eth-bytecode-db request metadata fields
+- [#8634](https://github.com/blockscout/blockscout/pull/8634) - API v2: NFT for address
+- [#8609](https://github.com/blockscout/blockscout/pull/8609) - Change logs format to JSON; Add endpoint url to the block_scout_web logging
+- [#8558](https://github.com/blockscout/blockscout/pull/8558) - Add CoinBalanceDailyUpdater
+
+### Fixes
+
+- [#8891](https://github.com/blockscout/blockscout/pull/8891) - Fix average block time
+- [#8869](https://github.com/blockscout/blockscout/pull/8869) - Limit TokenBalance fetcher timeout
+- [#8855](https://github.com/blockscout/blockscout/pull/8855) - All transactions count at top addresses page
+- [#8836](https://github.com/blockscout/blockscout/pull/8836) - Safe token update
+- [#8814](https://github.com/blockscout/blockscout/pull/8814) - Improve performance for EOA addresses in `/api/v2/addresses/{address_hash}`
+- [#8813](https://github.com/blockscout/blockscout/pull/8813) - Force verify twin contracts on `/api/v2/import/smart-contracts/{address_hash}`
+- [#8784](https://github.com/blockscout/blockscout/pull/8784) - Fix Indexer.Transform.Addresses for non-Suave setup
+- [#8770](https://github.com/blockscout/blockscout/pull/8770) - Fix for eth_getbalance API v1 endpoint when requesting latest tag
 - [#8765](https://github.com/blockscout/blockscout/pull/8765) - Fix for tvl update in market history when row already exists
 - [#8759](https://github.com/blockscout/blockscout/pull/8759) - Gnosis safe proxy via singleton input
 - [#8752](https://github.com/blockscout/blockscout/pull/8752) - Add `TOKEN_INSTANCE_OWNER_MIGRATION_ENABLED` env
@@ -13,10 +342,35 @@
 
 ### Chore
 
+- [#8832](https://github.com/blockscout/blockscout/pull/8832) - Log more details in regards 413 error
+- [#8807](https://github.com/blockscout/blockscout/pull/8807) - Smart-contract proxy detection refactoring
+- [#8802](https://github.com/blockscout/blockscout/pull/8802) - Enable API v2 by default
+- [#8742](https://github.com/blockscout/blockscout/pull/8742) - Merge rsk branch into the master branch
 - [#8728](https://github.com/blockscout/blockscout/pull/8728) - Remove repos_list (default value for ecto repos) from Explorer.ReleaseTasks
 
 <details>
   <summary>Dependencies version bumps</summary>
+
+- [#8727](https://github.com/blockscout/blockscout/pull/8727) - Bump browserify-sign from 4.2.1 to 4.2.2 in /apps/block_scout_web/assets
+- [#8748](https://github.com/blockscout/blockscout/pull/8748) - Bump sweetalert2 from 11.7.32 to 11.9.0 in /apps/block_scout_web/assets
+- [#8747](https://github.com/blockscout/blockscout/pull/8747) - Bump core-js from 3.33.1 to 3.33.2 in /apps/block_scout_web/assets
+- [#8743](https://github.com/blockscout/blockscout/pull/8743) - Bump solc from 0.8.21 to 0.8.22 in /apps/explorer
+- [#8745](https://github.com/blockscout/blockscout/pull/8745) - Bump tesla from 1.7.0 to 1.8.0
+- [#8749](https://github.com/blockscout/blockscout/pull/8749) - Bump sass from 1.69.4 to 1.69.5 in /apps/block_scout_web/assets
+- [#8744](https://github.com/blockscout/blockscout/pull/8744) - Bump phoenix_ecto from 4.4.2 to 4.4.3
+- [#8746](https://github.com/blockscout/blockscout/pull/8746) - Bump floki from 0.35.1 to 0.35.2
+- [#8793](https://github.com/blockscout/blockscout/pull/8793) - Bump eslint from 8.52.0 to 8.53.0 in /apps/block_scout_web/assets
+- [#8792](https://github.com/blockscout/blockscout/pull/8792) - Bump cldr_utils from 2.24.1 to 2.24.2
+- [#8787](https://github.com/blockscout/blockscout/pull/8787) - Bump ex_cldr_numbers from 2.32.2 to 2.32.3
+- [#8790](https://github.com/blockscout/blockscout/pull/8790) - Bump ex_abi from 0.6.3 to 0.6.4
+- [#8788](https://github.com/blockscout/blockscout/pull/8788) - Bump ex_cldr_units from 3.16.3 to 3.16.4
+- [#8827](https://github.com/blockscout/blockscout/pull/8827) - Bump @babel/core from 7.23.2 to 7.23.3 in /apps/block_scout_web/assets
+- [#8823](https://github.com/blockscout/blockscout/pull/8823) - Bump benchee from 1.1.0 to 1.2.0
+- [#8826](https://github.com/blockscout/blockscout/pull/8826) - Bump luxon from 3.4.3 to 3.4.4 in /apps/block_scout_web/assets
+- [#8824](https://github.com/blockscout/blockscout/pull/8824) - Bump httpoison from 2.1.0 to 2.2.0
+- [#8828](https://github.com/blockscout/blockscout/pull/8828) - Bump @babel/preset-env from 7.23.2 to 7.23.3 in /apps/block_scout_web/assets
+- [#8825](https://github.com/blockscout/blockscout/pull/8825) - Bump solc from 0.8.22 to 0.8.23 in /apps/explorer
+
 </details>
 
 ## 5.3.1-beta
