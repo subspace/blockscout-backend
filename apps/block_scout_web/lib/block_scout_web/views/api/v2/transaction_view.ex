@@ -533,7 +533,7 @@ defmodule BlockScoutWeb.API.V2.TransactionView do
           "nonce" => transaction.wrapped_nonce,
           "to" =>
             Helper.address_with_info(
-              single_tx? && conn,
+              conn,
               transaction.wrapped_to_address,
               transaction.wrapped_to_address_hash,
               single_tx?,

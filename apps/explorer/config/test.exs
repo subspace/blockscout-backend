@@ -44,6 +44,7 @@ config :explorer, Explorer.Repo.Account,
   log: false
 
 for repo <- [
+      Explorer.Repo.Beacon,
       Explorer.Repo.PolygonEdge,
       Explorer.Repo.PolygonZkevm,
       Explorer.Repo.RSK,

@@ -114,6 +114,24 @@ defmodule BlockScoutWeb.API.V2.BlockView do
         end
       end
 
+    "ethereum" ->
+      defp chain_type_fields(result, block, single_block?) do
+        if single_block? do
+          blob_gas_price = Block.transaction_blob_gas_price(block.transactions)
+          burnt_blob_transaction_fees = Decimal.mult(block.blob_gas_used || 0, blob_gas_price || 0)
+
+          result
+          |> Map.put("blob_gas_used", block.blob_gas_used)
+          |> Map.put("excess_blob_gas", block.excess_blob_gas)
+          |> Map.put("blob_gas_price", blob_gas_price)
+          |> Map.put("burnt_blob_fees", burnt_blob_transaction_fees)
+        else
+          result
+          |> Map.put("blob_gas_used", block.blob_gas_used)
+          |> Map.put("excess_blob_gas", block.excess_blob_gas)
+        end
+      end
+
     _ ->
       defp chain_type_fields(result, _block, _single_block?) do
         result

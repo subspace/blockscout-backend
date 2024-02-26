@@ -5,6 +5,15 @@ defmodule Explorer.Chain.Block.Schema do
   alias Explorer.Chain.Block.{Reward, SecondDegreeRelation}
 
   @chain_type_fields (case Application.compile_env(:explorer, :chain_type) do
+                        "ethereum" ->
+                          elem(
+                            quote do
+                              field(:blob_gas_used, :decimal)
+                              field(:excess_blob_gas, :decimal)
+                            end,
+                            2
+                          )
+
                         "rsk" ->
                           elem(
                             quote do
@@ -147,36 +156,6 @@ defmodule Explorer.Chain.Block do
   """
   Explorer.Chain.Block.Schema.generate()
 
-    if Application.compile_env(:explorer, :chain_type) == "rsk" do
-      field(:bitcoin_merged_mining_header, :binary)
-      field(:bitcoin_merged_mining_coinbase_transaction, :binary)
-      field(:bitcoin_merged_mining_merkle_proof, :binary)
-      field(:hash_for_merged_mining, :binary)
-      field(:minimum_gas_price, :decimal)
-    end
-
-    timestamps()
-
-    belongs_to(:miner, Address, foreign_key: :miner_hash, references: :hash, type: Hash.Address)
-
-    has_many(:nephew_relations, SecondDegreeRelation, foreign_key: :uncle_hash)
-    has_many(:nephews, through: [:nephew_relations, :nephew])
-
-    belongs_to(:parent, __MODULE__, foreign_key: :parent_hash, references: :hash, type: Hash.Full)
-
-    has_many(:uncle_relations, SecondDegreeRelation, foreign_key: :nephew_hash)
-    has_many(:uncles, through: [:uncle_relations, :uncle])
-
-    has_many(:transactions, Transaction)
-    has_many(:transaction_forks, Transaction.Fork, foreign_key: :uncle_hash)
-
-    has_many(:rewards, Reward, foreign_key: :block_hash)
-
-    has_many(:withdrawals, Withdrawal, foreign_key: :block_hash)
-
-    has_one(:pending_operations, PendingBlockOperation, foreign_key: :block_hash)
-  end
-
   def changeset(%__MODULE__{} = block, attrs) do
     block
     |> cast(attrs, @required_attrs ++ @optional_attrs)
@@ -306,9 +285,6 @@ defmodule Explorer.Chain.Block do
     end
   end
 
-  defp base_fee_per_gas_to_wei(%Wei{} = wei), do: wei
-  defp base_fee_per_gas_to_wei(base_fee_per_gas), do: %Wei{value: Decimal.new(base_fee_per_gas)}
-
   @uncle_reward_coef 32
   @spec block_reward_by_parts(Block.t(), [Transaction.t()]) :: %{
           block_number: block_number(),
@@ -346,7 +322,7 @@ defmodule Explorer.Chain.Block do
       miner_hash: block.miner_hash,
       static_reward: static_reward,
       transaction_fees: %Wei{value: transaction_fees},
-      burnt_fees: burnt_fees || %Wei{value: Decimal.new(0)},
+      burnt_fees: %Wei{value: burnt_fees},
       uncle_reward: uncle_reward
     }
   end
