@@ -35,12 +35,6 @@ defmodule Explorer.DataCase do
 
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Explorer.Repo)
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Explorer.Repo.Account)
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Explorer.Repo.PolygonEdge)
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Explorer.Repo.PolygonZkevm)
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Explorer.Repo.RSK)
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Explorer.Repo.Shibarium)
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Explorer.Repo.Suave)
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Explorer.Repo.BridgedTokens)
 
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(Explorer.Repo, {:shared, self()})
