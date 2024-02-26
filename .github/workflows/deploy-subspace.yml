@@ -12,6 +12,7 @@ env:
   TAG_NAME: subspace
   OTP_VERSION: "25.2.1"
   ELIXIR_VERSION: "1.14.3"
+  RELEASE_VERSION: "6.2.0"
 
 # concurrency:
 #   group: ${{ github.workflow }}-${{ github.ref }}
@@ -20,9 +21,10 @@ env:
 jobs:
   publish_image:
     name: Publish Docker image
-    env:
-      RELEASE_VERSION: 5.2.3
     runs-on: ubuntu-latest
+    outputs:
+      release-version: ${{ steps.output-step.outputs.release-version }}
+      short-sha: ${{ steps.output-step.outputs.short-sha }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
@@ -51,7 +53,7 @@ jobs:
         run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
 
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./docker/Dockerfile
@@ -75,5 +77,29 @@ jobs:
             AMPLITUDE_URL=
             AMPLITUDE_API_KEY=
             CACHE_ADDRESS_WITH_BALANCES_UPDATE_INTERVAL=
-            BLOCKSCOUT_VERSION=v${{ env.RELEASE_VERSION }}-beta
+            BLOCKSCOUT_VERSION=v${{ env.RELEASE_VERSION }}-beta.+commit.${{ env.SHORT_SHA }}
+            RELEASE_VERSION=${{ env.RELEASE_VERSION }}
+
+      - name: Build and push Docker image for frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/Dockerfile
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: ghcr.io/${{ github.repository_owner }}/blockscout-frontend:${{ env.TAG_NAME }}
+          platforms: |
+            linux/arm64
+            linux/amd64
+          build-args: |
+            CACHE_EXCHANGE_RATES_PERIOD=
+            API_V1_READ_METHODS_DISABLED=false
+            DISABLE_WEBAPP=false
+            API_V1_WRITE_METHODS_DISABLED=false
+            CACHE_TOTAL_GAS_USAGE_COUNTER_ENABLED=
+            ADMIN_PANEL_ENABLED=false
+            CACHE_ADDRESS_WITH_BALANCES_UPDATE_INTERVAL=
+            SESSION_COOKIE_DOMAIN=k8s-dev.blockscout.com
+            BLOCKSCOUT_VERSION=v${{ env.RELEASE_VERSION }}-beta.+commit.${{ env.SHORT_SHA }}
             RELEASE_VERSION=${{ env.RELEASE_VERSION }}
