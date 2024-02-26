@@ -11,7 +11,7 @@ on:
 env:
   TAG_NAME: subspace
   OTP_VERSION: "25.2.1"
-  ELIXIR_VERSION: "1.14.3"
+  ELIXIR_VERSION: "1.14.5"
   RELEASE_VERSION: "6.2.0"
 
 # concurrency:
@@ -30,10 +30,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       # Will automatically make nice tags, see the table here https://github.com/docker/metadata-action#basic
       - name: Docker meta
@@ -52,7 +52,7 @@ jobs:
       - name: Add SHORT_SHA env property with commit short sha
         run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
 
-      - name: Build and push
+      - name: Build and push Docker image for backend
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -77,29 +77,5 @@ jobs:
             AMPLITUDE_URL=
             AMPLITUDE_API_KEY=
             CACHE_ADDRESS_WITH_BALANCES_UPDATE_INTERVAL=
-            BLOCKSCOUT_VERSION=v${{ env.RELEASE_VERSION }}-beta.+commit.${{ env.SHORT_SHA }}
-            RELEASE_VERSION=${{ env.RELEASE_VERSION }}
-
-      - name: Build and push Docker image for frontend
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./docker/Dockerfile
-          push: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          tags: ghcr.io/${{ github.repository_owner }}/blockscout-frontend:${{ env.TAG_NAME }}
-          platforms: |
-            linux/arm64
-            linux/amd64
-          build-args: |
-            CACHE_EXCHANGE_RATES_PERIOD=
-            API_V1_READ_METHODS_DISABLED=false
-            DISABLE_WEBAPP=false
-            API_V1_WRITE_METHODS_DISABLED=false
-            CACHE_TOTAL_GAS_USAGE_COUNTER_ENABLED=
-            ADMIN_PANEL_ENABLED=false
-            CACHE_ADDRESS_WITH_BALANCES_UPDATE_INTERVAL=
-            SESSION_COOKIE_DOMAIN=k8s-dev.blockscout.com
             BLOCKSCOUT_VERSION=v${{ env.RELEASE_VERSION }}-beta.+commit.${{ env.SHORT_SHA }}
             RELEASE_VERSION=${{ env.RELEASE_VERSION }}
