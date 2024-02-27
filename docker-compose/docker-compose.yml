@@ -46,8 +46,7 @@ services:
       ETHEREUM_JSONRPC_HTTP_URL: https://nova-0.gemini-3h.subspace.network/ws
       ETHEREUM_JSONRPC_TRACE_URL: https://nova-0.gemini-3h.subspace.network/ws
       ETHEREUM_JSONRPC_WS_URL: wss://nova-0.gemini-3h.subspace.network/ws
-      DATABASE_URL: postgresql://postgres:@host.docker.internal:7432/blockscout?ssl=false
-      CHAIN_ID: "1002"
+      CHAIN_ID: "49000"
     volumes:
       - ./logs/:/app/logs/
 

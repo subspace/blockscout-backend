@@ -57,7 +57,7 @@ RUN cd apps/block_scout_web/assets/ && \
     apk del --force-broken-world alpine-sdk gmp-dev automake libtool inotify-tools autoconf python3
 
 
-RUN apk add --update git make 
+RUN apk add --update git make
 
 RUN mix phx.digest
 

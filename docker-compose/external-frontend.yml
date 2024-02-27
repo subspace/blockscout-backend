@@ -26,12 +26,12 @@ services:
     links:
       - db:database
     environment:
-        ETHEREUM_JSONRPC_VARIANT: 'ganache'
-        ETHEREUM_JSONRPC_WS_URL: ws://host.docker.internal:8545/
-        INDEXER_DISABLE_INTERNAL_TRANSACTIONS_FETCHER: 'true'
-        INDEXER_DISABLE_PENDING_TRANSACTIONS_FETCHER: 'true'
-        CHAIN_ID: '1337'
-
+      ETHEREUM_JSONRPC_TRACE_URL: https://nova-0.gemini-3h.subspace.network
+      ETHEREUM_JSONRPC_VARIANT: "ganache"
+      ETHEREUM_JSONRPC_HTTP_URL: https://nova-0.gemini-3h.subspace.network/ws
+      ETHEREUM_JSONRPC_WS_URL: wss://nova-0.gemini-3h.subspace.network/ws
+      INDEXER_DISABLE_INTERNAL_TRANSACTIONS_FETCHER: "true"
+      INDEXER_DISABLE_PENDING_TRANSACTIONS_FETCHER: "true"
   visualizer:
     extends:
       file: ./services/visualizer.yml

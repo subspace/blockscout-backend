@@ -18,6 +18,7 @@ Ecto.Adapters.SQL.Sandbox.mode(Explorer.Repo.PolygonZkevm, :auto)
 Ecto.Adapters.SQL.Sandbox.mode(Explorer.Repo.RSK, :auto)
 Ecto.Adapters.SQL.Sandbox.mode(Explorer.Repo.Shibarium, :auto)
 Ecto.Adapters.SQL.Sandbox.mode(Explorer.Repo.Suave, :auto)
+Ecto.Adapters.SQL.Sandbox.mode(Explorer.Repo.Beacon, :auto)
 Ecto.Adapters.SQL.Sandbox.mode(Explorer.Repo.BridgedTokens, :auto)
 Ecto.Adapters.SQL.Sandbox.mode(Explorer.Repo.Filecoin, :auto)
 
