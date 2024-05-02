@@ -76,6 +76,11 @@ config :explorer, Explorer.Chain.Cache.WithdrawalsSum,
   enable_consolidation: true,
   update_interval_in_milliseconds: update_interval_in_milliseconds_default
 
+config :explorer, Explorer.Chain.Cache.StabilityValidatorsCounters,
+  enabled: true,
+  enable_consolidation: true,
+  update_interval_in_milliseconds: update_interval_in_milliseconds_default
+
 config :explorer, Explorer.Chain.Cache.TransactionActionTokensData, enabled: true
 
 config :explorer, Explorer.Chain.Cache.TransactionActionUniswapPools, enabled: true
@@ -128,6 +133,8 @@ config :explorer, Explorer.Chain.Cache.GasUsage,
 config :explorer, Explorer.Integrations.EctoLogger, query_time_ms_threshold: :timer.seconds(2)
 
 config :explorer, Explorer.Tags.AddressTag.Cataloger, enabled: true
+
+config :explorer, Explorer.SmartContract.CertifiedSmartContractCataloger, enabled: true
 
 config :explorer, Explorer.Repo, migration_timestamps: [type: :utc_datetime_usec]
 

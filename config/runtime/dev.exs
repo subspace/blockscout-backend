@@ -92,6 +92,13 @@ config :explorer, Explorer.Repo.BridgedTokens,
   # separating repos for different CHAIN_TYPE is implemented only for the sake of keeping DB schema update relevant to the current chain type
   pool_size: 1
 
+# Configure Optimism database
+config :explorer, Explorer.Repo.Optimism,
+  database: database,
+  hostname: hostname,
+  url: System.get_env("DATABASE_URL"),
+  pool_size: 1
+
 # Configure PolygonEdge database
 config :explorer, Explorer.Repo.PolygonEdge,
   database: database,
@@ -103,6 +110,15 @@ config :explorer, Explorer.Repo.PolygonEdge,
 
 # Configure PolygonZkevm database
 config :explorer, Explorer.Repo.PolygonZkevm,
+  database: database,
+  hostname: hostname,
+  url: System.get_env("DATABASE_URL"),
+  # actually this repo is not started, and its pool size remains unused.
+  # separating repos for different CHAIN_TYPE is implemented only for the sake of keeping DB schema update relevant to the current chain type
+  pool_size: 1
+
+# Configure ZkSync database
+config :explorer, Explorer.Repo.ZkSync,
   database: database,
   hostname: hostname,
   url: System.get_env("DATABASE_URL"),
@@ -135,6 +151,13 @@ config :explorer, Explorer.Repo.Suave,
 
 # Configure Filecoin database
 config :explorer, Explorer.Repo.Filecoin,
+  database: database,
+  hostname: hostname,
+  url: System.get_env("DATABASE_URL"),
+  pool_size: 1
+
+# Configures Stability database
+config :explorer, Explorer.Repo.Stability,
   database: database,
   hostname: hostname,
   url: System.get_env("DATABASE_URL"),

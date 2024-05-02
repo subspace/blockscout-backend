@@ -23,6 +23,7 @@ defmodule Explorer.Factory do
   alias Explorer.Admin.Administrator
   alias Explorer.Chain.Beacon.{Blob, BlobTransaction}
   alias Explorer.Chain.Block.{EmissionReward, Range, Reward}
+  alias Explorer.Chain.Stability.Validator, as: ValidatorStability
 
   alias Explorer.Chain.{
     Address,
@@ -46,6 +47,8 @@ defmodule Explorer.Factory do
     Transaction,
     Withdrawal
   }
+
+  alias Explorer.Chain.Optimism.OutputRoot
 
   alias Explorer.SmartContract.Helper
   alias Explorer.Tags.{AddressTag, AddressToTag}
@@ -103,6 +106,10 @@ defmodule Explorer.Factory do
         "ERC-721" => %{
           "incoming" => random_bool(),
           "outcoming" => random_bool()
+        },
+        "ERC-404" => %{
+          "incoming" => random_bool(),
+          "outcoming" => random_bool()
         }
       },
       "notification_methods" => %{
@@ -127,6 +134,8 @@ defmodule Explorer.Factory do
       watch_erc_721_output: random_bool(),
       watch_erc_1155_input: random_bool(),
       watch_erc_1155_output: random_bool(),
+      watch_erc_404_input: random_bool(),
+      watch_erc_404_output: random_bool(),
       notify_email: random_bool()
     }
   end
@@ -202,6 +211,8 @@ defmodule Explorer.Factory do
       watch_erc_721_output: random_bool(),
       watch_erc_1155_input: random_bool(),
       watch_erc_1155_output: random_bool(),
+      watch_erc_404_input: random_bool(),
+      watch_erc_404_output: random_bool(),
       notify_email: random_bool()
     }
   end
@@ -539,7 +550,7 @@ defmodule Explorer.Factory do
         collated_params
       )
       when is_list(collated_params) do
-    next_transaction_index = block_hash_to_next_transaction_index(block_hash)
+    next_transaction_index = collated_params[:index] || block_hash_to_next_transaction_index(block_hash)
 
     cumulative_gas_used = collated_params[:cumulative_gas_used] || Enum.random(21_000..100_000)
     gas_used = collated_params[:gas_used] || Enum.random(21_000..100_000)
@@ -696,7 +707,7 @@ defmodule Explorer.Factory do
       cataloged: true,
       icon_url: sequence("https://example.com/icon"),
       fiat_value: 10.1,
-      is_verified_via_admin_panel: Enum.random([true, false])
+      is_verified_via_admin_panel: false
     }
   end
 
@@ -874,7 +885,8 @@ defmodule Explorer.Factory do
       contract_code_md5: bytecode_md5,
       verified_via_sourcify: Enum.random([true, false]),
       is_vyper_contract: Enum.random([true, false]),
-      verified_via_eth_bytecode_db: Enum.random([true, false])
+      verified_via_eth_bytecode_db: Enum.random([true, false]),
+      verified_via_verifier_alliance: Enum.random([true, false])
     }
   end
 
@@ -948,7 +960,14 @@ defmodule Explorer.Factory do
   end
 
   def address_current_token_balance_with_token_id_factory do
-    {token_type, token_id} = Enum.random([{"ERC-20", nil}, {"ERC-721", nil}, {"ERC-1155", Enum.random(1..100_000)}])
+    {token_type, token_id} =
+      Enum.random([
+        {"ERC-20", nil},
+        {"ERC-721", nil},
+        {"ERC-1155", Enum.random(1..100_000)},
+        {"ERC-404", nil},
+        {"ERC-404", Enum.random(1..100_000)}
+      ])
 
     %CurrentTokenBalance{
       address: build(:address),
@@ -1115,5 +1134,42 @@ defmodule Explorer.Factory do
     }
   end
 
+  def op_output_root_factory do
+    %OutputRoot{
+      l2_output_index: op_output_root_l2_output_index(),
+      l2_block_number: insert(:block) |> Map.get(:number),
+      l1_transaction_hash: transaction_hash(),
+      l1_timestamp: DateTime.utc_now(),
+      l1_block_number: op_output_root_l1_block_number(),
+      output_root: op_output_root_hash()
+    }
+  end
+
+  defp op_output_root_l2_output_index do
+    sequence("op_output_root_l2_output_index", & &1)
+  end
+
+  defp op_output_root_l1_block_number do
+    sequence("op_output_root_l1_block_number", & &1)
+  end
+
+  defp op_output_root_hash do
+    {:ok, hash} =
+      "op_output_root_hash"
+      |> sequence(& &1)
+      |> Hash.Full.cast()
+
+    hash
+  end
+
   def random_bool, do: Enum.random([true, false])
+
+  def validator_stability_factory do
+    address = insert(:address)
+
+    %ValidatorStability{
+      address_hash: address.hash,
+      state: Enum.random(0..2)
+    }
+  end
 end

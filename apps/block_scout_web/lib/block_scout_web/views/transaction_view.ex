@@ -223,6 +223,7 @@ defmodule BlockScoutWeb.TransactionView do
       :erc20 -> gettext("ERC-20 ")
       :erc721 -> gettext("ERC-721 ")
       :erc1155 -> gettext("ERC-1155 ")
+      :erc404 -> gettext("ERC-404 ")
       _ -> ""
     end
   end
@@ -409,10 +410,24 @@ defmodule BlockScoutWeb.TransactionView do
     format_wei_value(gas_price, unit)
   end
 
+  def l1_gas_price(transaction, unit) when unit in ~w(wei gwei ether)a do
+    case Map.get(transaction, :l1_gas_price) do
+      nil -> nil
+      value -> format_wei_value(value, unit)
+    end
+  end
+
   def gas_used(%Transaction{gas_used: nil}), do: gettext("Pending")
 
   def gas_used(%Transaction{gas_used: gas_used}) do
     Number.to_string!(gas_used)
+  end
+
+  def l1_gas_used(transaction) do
+    case Map.get(transaction, :l1_gas_used) do
+      nil -> gettext("Pending")
+      value -> Number.to_string!(value)
+    end
   end
 
   def gas_used_perc(%Transaction{gas_used: nil}), do: nil

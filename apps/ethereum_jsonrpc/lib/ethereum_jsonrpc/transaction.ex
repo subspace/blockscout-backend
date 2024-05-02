@@ -12,7 +12,7 @@ defmodule EthereumJSONRPC.Transaction do
   alias EthereumJSONRPC
 
   case Application.compile_env(:explorer, :chain_type) do
-    "ethereum" ->
+    :ethereum ->
       @chain_type_fields quote(
                            do: [
                              max_fee_per_blob_gas: non_neg_integer(),
@@ -20,7 +20,15 @@ defmodule EthereumJSONRPC.Transaction do
                            ]
                          )
 
-    "suave" ->
+    :optimism ->
+      @chain_type_fields quote(
+                           do: [
+                             l1_tx_origin: EthereumJSONRPC.hash(),
+                             l1_block_number: non_neg_integer()
+                           ]
+                         )
+
+    :suave ->
       @chain_type_fields quote(
                            do: [
                              execution_node_hash: EthereumJSONRPC.address(),
@@ -76,11 +84,15 @@ defmodule EthereumJSONRPC.Transaction do
    * `"maxFeePerGas"` - `t:EthereumJSONRPC.quantity/0` of wei to denote max fee per unit of gas used. Introduced in [EIP-1559](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1559.md)
    * `"type"` - `t:EthereumJSONRPC.quantity/0` denotes transaction type. Introduced in [EIP-1559](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1559.md)
    #{case Application.compile_env(:explorer, :chain_type) do
-    "ethereum" -> """
+    :ethereum -> """
        * `"maxFeePerBlobGas"` - `t:EthereumJSONRPC.quantity/0` of wei to denote max fee per unit of blob gas used. Introduced in [EIP-4844](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-4844.md)
        * `"blobVersionedHashes"` - `t:list/0` of `t:EthereumJSONRPC.hash/0` of included data blobs hashes. Introduced in [EIP-4844](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-4844.md)
       """
-    "suave" -> """
+    :optimism -> """
+       * `"l1TxOrigin"` - .
+       * `"l1BlockNumber"` - .
+      """
+    :suave -> """
        * `"executionNode"` - `t:EthereumJSONRPC.address/0` of execution node (used by Suave).
        * `"requestRecord"` - map of wrapped transaction data (used by Suave).
       """
@@ -131,6 +143,7 @@ defmodule EthereumJSONRPC.Transaction do
       ...>     "s" => 31606574786494953692291101914709926755545765281581808821704454381804773090106,
       ...>     "to" => "0x5df9b87991262f6ba471f09758cde1c0fc1de734",
       ...>     "transactionIndex" => 0,
+      ...>     "type" => 2,
       ...>     "v" => 28,
       ...>     "value" => 31337
       ...>   }
@@ -148,9 +161,47 @@ defmodule EthereumJSONRPC.Transaction do
         r: 61965845294689009770156372156374760022787886965323743865986648153755601564112,
         s: 31606574786494953692291101914709926755545765281581808821704454381804773090106,
         to_address_hash: "0x5df9b87991262f6ba471f09758cde1c0fc1de734",
+        type: 2,
         v: 28,
         value: 31337,
         transaction_index: 0
+      }
+
+      iex> EthereumJSONRPC.Transaction.elixir_to_params(
+      ...>   %{
+      ...>     "blockHash" => "0x4e3a3754410177e6937ef1f84bba68ea139e8d1a2258c5f85db9f1cd715a1bdd",
+      ...>     "blockNumber" => 46147,
+      ...>     "from" => "0xa1e4380a3b1f749673e270229993ee55f35663b4",
+      ...>     "gas" => 21000,
+      ...>     "hash" => "0x5c504ed432cb51138bcf09aa5e8a410dd4a1e204ef84bfed1be16dfba1b22060",
+      ...>     "input" => "0x",
+      ...>     "nonce" => 0,
+      ...>     "r" => 61965845294689009770156372156374760022787886965323743865986648153755601564112,
+      ...>     "s" => 31606574786494953692291101914709926755545765281581808821704454381804773090106,
+      ...>     "to" => "0x5df9b87991262f6ba471f09758cde1c0fc1de734",
+      ...>     "transactionIndex" => 0,
+      ...>     "type" => 2,
+      ...>     "v" => 28,
+      ...>     "value" => 31337
+      ...>   }
+      ...> )
+      %{
+        block_hash: "0x4e3a3754410177e6937ef1f84bba68ea139e8d1a2258c5f85db9f1cd715a1bdd",
+        block_number: 46147,
+        from_address_hash: "0xa1e4380a3b1f749673e270229993ee55f35663b4",
+        gas: 21000,
+        hash: "0x5c504ed432cb51138bcf09aa5e8a410dd4a1e204ef84bfed1be16dfba1b22060",
+        index: 0,
+        input: "0x",
+        nonce: 0,
+        r: 61965845294689009770156372156374760022787886965323743865986648153755601564112,
+        s: 31606574786494953692291101914709926755545765281581808821704454381804773090106,
+        to_address_hash: "0x5df9b87991262f6ba471f09758cde1c0fc1de734",
+        type: 2,
+        v: 28,
+        value: 31337,
+        transaction_index: 0,
+        gas_price: 0
       }
 
   Erigon `elixir` from txpool_content method can be converted to `params`.
@@ -213,11 +264,8 @@ defmodule EthereumJSONRPC.Transaction do
           "hash" => hash,
           "input" => input,
           "nonce" => nonce,
-          "r" => r,
-          "s" => s,
           "to" => to_address_hash,
           "transactionIndex" => index,
-          "v" => v,
           "value" => value,
           "type" => type,
           "maxPriorityFeePerGas" => max_priority_fee_per_gas,
@@ -234,10 +282,7 @@ defmodule EthereumJSONRPC.Transaction do
       index: index,
       input: input,
       nonce: nonce,
-      r: r,
-      s: s,
       to_address_hash: to_address_hash,
-      v: v,
       value: value,
       transaction_index: index,
       type: type,
@@ -247,7 +292,10 @@ defmodule EthereumJSONRPC.Transaction do
 
     put_if_present(transaction, result, [
       {"creates", :created_contract_address_hash},
-      {"block_timestamp", :block_timestamp}
+      {"block_timestamp", :block_timestamp},
+      {"r", :r},
+      {"s", :s},
+      {"v", :v}
     ])
   end
 
@@ -262,11 +310,8 @@ defmodule EthereumJSONRPC.Transaction do
           "hash" => hash,
           "input" => input,
           "nonce" => nonce,
-          "r" => r,
-          "s" => s,
           "to" => to_address_hash,
           "transactionIndex" => index,
-          "v" => v,
           "value" => value,
           "type" => type,
           "maxPriorityFeePerGas" => max_priority_fee_per_gas,
@@ -283,10 +328,7 @@ defmodule EthereumJSONRPC.Transaction do
       index: index,
       input: input,
       nonce: nonce,
-      r: r,
-      s: s,
       to_address_hash: to_address_hash,
-      v: v,
       value: value,
       transaction_index: index,
       type: type,
@@ -296,10 +338,14 @@ defmodule EthereumJSONRPC.Transaction do
 
     put_if_present(transaction, result, [
       {"creates", :created_contract_address_hash},
-      {"block_timestamp", :block_timestamp}
+      {"block_timestamp", :block_timestamp},
+      {"r", :r},
+      {"s", :s},
+      {"v", :v}
     ])
   end
 
+  # for legacy txs without maxPriorityFeePerGas and maxFeePerGas
   def do_elixir_to_params(
         %{
           "blockHash" => block_hash,
@@ -310,11 +356,8 @@ defmodule EthereumJSONRPC.Transaction do
           "hash" => hash,
           "input" => input,
           "nonce" => nonce,
-          "r" => r,
-          "s" => s,
           "to" => to_address_hash,
           "transactionIndex" => index,
-          "v" => v,
           "value" => value,
           "type" => type
         } = transaction
@@ -329,10 +372,7 @@ defmodule EthereumJSONRPC.Transaction do
       index: index,
       input: input,
       nonce: nonce,
-      r: r,
-      s: s,
       to_address_hash: to_address_hash,
-      v: v,
       value: value,
       transaction_index: index,
       type: type
@@ -340,10 +380,14 @@ defmodule EthereumJSONRPC.Transaction do
 
     put_if_present(transaction, result, [
       {"creates", :created_contract_address_hash},
-      {"block_timestamp", :block_timestamp}
+      {"block_timestamp", :block_timestamp},
+      {"r", :r},
+      {"s", :s},
+      {"v", :v}
     ])
   end
 
+  # for legacy txs without type, maxPriorityFeePerGas and maxFeePerGas
   def do_elixir_to_params(
         %{
           "blockHash" => block_hash,
@@ -354,11 +398,8 @@ defmodule EthereumJSONRPC.Transaction do
           "hash" => hash,
           "input" => input,
           "nonce" => nonce,
-          "r" => r,
-          "s" => s,
           "to" => to_address_hash,
           "transactionIndex" => index,
-          "v" => v,
           "value" => value
         } = transaction
       ) do
@@ -372,29 +413,78 @@ defmodule EthereumJSONRPC.Transaction do
       index: index,
       input: input,
       nonce: nonce,
-      r: r,
-      s: s,
       to_address_hash: to_address_hash,
-      v: v,
       value: value,
       transaction_index: index
     }
 
     put_if_present(transaction, result, [
       {"creates", :created_contract_address_hash},
-      {"block_timestamp", :block_timestamp}
+      {"block_timestamp", :block_timestamp},
+      {"r", :r},
+      {"s", :s},
+      {"v", :v}
+    ])
+  end
+
+  # for txs without gasPrice, maxPriorityFeePerGas and maxFeePerGas
+  def do_elixir_to_params(
+        %{
+          "blockHash" => block_hash,
+          "blockNumber" => block_number,
+          "from" => from_address_hash,
+          "gas" => gas,
+          "hash" => hash,
+          "input" => input,
+          "nonce" => nonce,
+          "to" => to_address_hash,
+          "transactionIndex" => index,
+          "type" => type,
+          "value" => value
+        } = transaction
+      ) do
+    result = %{
+      block_hash: block_hash,
+      block_number: block_number,
+      from_address_hash: from_address_hash,
+      gas: gas,
+      gas_price: 0,
+      hash: hash,
+      index: index,
+      input: input,
+      nonce: nonce,
+      to_address_hash: to_address_hash,
+      value: value,
+      transaction_index: index,
+      type: type
+    }
+
+    put_if_present(transaction, result, [
+      {"creates", :created_contract_address_hash},
+      {"block_timestamp", :block_timestamp},
+      {"r", :r},
+      {"s", :s},
+      {"v", :v}
     ])
   end
 
   defp chain_type_fields(params, elixir) do
     case Application.get_env(:explorer, :chain_type) do
-      "ethereum" ->
+      :ethereum ->
         put_if_present(elixir, params, [
           {"blobVersionedHashes", :blob_versioned_hashes},
           {"maxFeePerBlobGas", :max_fee_per_blob_gas}
         ])
 
-      "suave" ->
+      :optimism ->
+        # we need to put blobVersionedHashes for Indexer.Fetcher.Optimism.TxnBatch module
+        put_if_present(elixir, params, [
+          {"l1TxOrigin", :l1_tx_origin},
+          {"l1BlockNumber", :l1_block_number},
+          {"blobVersionedHashes", :blob_versioned_hashes}
+        ])
+
+      :suave ->
         wrapped = Map.get(elixir, "requestRecord")
 
         if is_nil(wrapped) do
@@ -552,7 +642,8 @@ defmodule EthereumJSONRPC.Transaction do
   end
 
   # quantity or nil for pending
-  defp entry_to_elixir({key, quantity_or_nil}) when key in ~w(blockNumber transactionIndex) do
+  defp entry_to_elixir({key, quantity_or_nil})
+       when key in ~w(blockNumber transactionIndex l1TxOrigin l1BlockNumber) do
     elixir =
       case quantity_or_nil do
         nil -> nil
@@ -568,6 +659,11 @@ defmodule EthereumJSONRPC.Transaction do
       nil -> {key, chain_id}
       _ -> {key, quantity_to_integer(chain_id)}
     end
+  end
+
+  # ZkSync fields
+  defp entry_to_elixir({key, _}) when key in ~w(l1BatchNumber l1BatchTxIndex) do
+    {:ignore, :ignore}
   end
 
   defp entry_to_elixir(_) do

@@ -9,7 +9,6 @@ defmodule Indexer.Fetcher.CoinBalance.Realtime do
   alias Explorer.Chain.{Block, Hash}
   alias Indexer.{BufferedTask, Tracer}
   alias Indexer.Fetcher.CoinBalance.Helper
-  alias Indexer.Fetcher.CoinBalance.Realtime.Supervisor, as: CoinBalanceSupervisor
 
   @behaviour BufferedTask
 
@@ -45,7 +44,7 @@ defmodule Indexer.Fetcher.CoinBalance.Realtime do
               tracer: Tracer
             )
   def run(entries, json_rpc_named_arguments) do
-    Helper.run(entries, json_rpc_named_arguments, false)
+    Helper.run(entries, json_rpc_named_arguments, :realtime)
   end
 
   defp defaults do

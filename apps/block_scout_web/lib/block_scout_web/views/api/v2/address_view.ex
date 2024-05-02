@@ -34,7 +34,11 @@ defmodule BlockScoutWeb.API.V2.AddressView do
   end
 
   def render("coin_balances_by_day.json", %{coin_balances_by_day: coin_balances_by_day}) do
-    Enum.map(coin_balances_by_day, &prepare_coin_balance_history_by_day_entry/1)
+    %{
+      :items => Enum.map(coin_balances_by_day, &prepare_coin_balance_history_by_day_entry/1),
+      :days =>
+        Application.get_env(:block_scout_web, BlockScoutWeb.Chain.Address.CoinBalance)[:coin_balance_history_days]
+    }
   end
 
   def render("tokens.json", %{tokens: tokens, next_page_params: next_page_params}) do
@@ -230,7 +234,7 @@ defmodule BlockScoutWeb.API.V2.AddressView do
         ) :: map()
   def fetch_and_render_token_instance(token_id, token, address_hash, token_balance) do
     token_instance =
-      case Chain.erc721_or_erc1155_token_instance_from_token_id_and_token_address(
+      case Chain.nft_instance_from_token_id_and_token_address(
              token_id,
              token.contract_address_hash,
              @api_true

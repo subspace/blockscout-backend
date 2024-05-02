@@ -12,6 +12,9 @@ services:
       service: db-init
 
   db:
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
     extends:
       file: ./services/db.yml
       service: db
@@ -34,7 +37,7 @@ services:
         CACHE_TOTAL_GAS_USAGE_COUNTER_ENABLED: ""
         CACHE_ADDRESS_WITH_BALANCES_UPDATE_INTERVAL: ""
         ADMIN_PANEL_ENABLED: ""
-        RELEASE_VERSION: 6.2.0
+        RELEASE_VERSION: 6.5.0
     links:
       - db:database
     command: sh -c "bin/blockscout eval \"Elixir.Explorer.ReleaseTasks.create_and_migrate()\" && bin/blockscout start"
@@ -74,7 +77,8 @@ services:
 
   stats-db:
     depends_on:
-      - backend
+      stats-db-init:
+        condition: service_completed_successfully
     extends:
       file: ./services/stats.yml
       service: stats-db
@@ -82,6 +86,7 @@ services:
   stats:
     depends_on:
       - stats-db
+      - backend
     extends:
       file: ./services/stats.yml
       service: stats

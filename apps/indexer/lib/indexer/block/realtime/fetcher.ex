@@ -35,6 +35,8 @@ defmodule Indexer.Block.Realtime.Fetcher do
   alias Explorer.Utility.MissingRangesManipulator
   alias Indexer.{Block, Tracer}
   alias Indexer.Block.Realtime.TaskSupervisor
+  alias Indexer.Fetcher.Optimism.TxnBatch, as: OptimismTxnBatch
+  alias Indexer.Fetcher.Optimism.Withdrawal, as: OptimismWithdrawal
   alias Indexer.Fetcher.PolygonEdge.{DepositExecute, Withdrawal}
   alias Indexer.Fetcher.PolygonZkevm.BridgeL2, as: PolygonZkevmBridgeL2
   alias Indexer.Fetcher.Shibarium.L2, as: ShibariumBridgeL2
@@ -74,6 +76,7 @@ defmodule Indexer.Block.Realtime.Fetcher do
   @impl GenServer
   def init(%{block_fetcher: %Block.Fetcher{} = block_fetcher, subscribe_named_arguments: subscribe_named_arguments}) do
     Logger.metadata(fetcher: :block_realtime)
+    Process.flag(:trap_exit, true)
 
     {:ok, %__MODULE__{block_fetcher: %Block.Fetcher{block_fetcher | broadcast: :realtime, callback_module: __MODULE__}},
      {:continue, {:init, subscribe_named_arguments}}}
@@ -128,14 +131,18 @@ defmodule Indexer.Block.Realtime.Fetcher do
     new_previous_number =
       case EthereumJSONRPC.fetch_block_number_by_tag("latest", json_rpc_named_arguments) do
         {:ok, number} when is_nil(previous_number) or number != previous_number ->
-          if abnormal_gap?(number, previous_number) do
-            new_number = max(number, previous_number)
-            start_fetch_and_import(new_number, block_fetcher, previous_number)
-            new_number
-          else
-            start_fetch_and_import(number, block_fetcher, previous_number)
-            number
-          end
+          number =
+            if abnormal_gap?(number, previous_number) do
+              new_number = max(number, previous_number)
+              start_fetch_and_import(new_number, block_fetcher, previous_number)
+              new_number
+            else
+              start_fetch_and_import(number, block_fetcher, previous_number)
+              number
+            end
+
+          fetch_validators_async()
+          number
 
         _ ->
           previous_number
@@ -154,6 +161,21 @@ defmodule Indexer.Block.Realtime.Fetcher do
   # don't handle other messages (e.g. :ssl_closed)
   def handle_info(_, state) do
     {:noreply, state}
+  end
+
+  @impl GenServer
+  def terminate(_reason, %__MODULE__{timer: timer}) do
+    Process.cancel_timer(timer)
+  end
+
+  if Application.compile_env(:explorer, :chain_type) == :stability do
+    defp fetch_validators_async do
+      GenServer.cast(Indexer.Fetcher.Stability.Validator, :update_validators_list)
+    end
+  else
+    defp fetch_validators_async do
+      :ignore
+    end
   end
 
   defp subscribe_to_new_heads(%__MODULE__{subscription: nil} = state, subscribe_named_arguments)
@@ -200,6 +222,7 @@ defmodule Indexer.Block.Realtime.Fetcher do
       options
       |> Map.drop(@import_options)
       |> put_in([:blocks, :params, Access.all(), :consensus], true)
+      |> put_in([:blocks, :params, Access.all(), :refetch_needed], false)
       |> put_in([:block_rewards], chain_import_block_rewards)
 
     with {:import, {:ok, imported} = ok} <- {:import, Chain.import(chain_import_options)} do
@@ -264,6 +287,9 @@ defmodule Indexer.Block.Realtime.Fetcher do
     Indexer.Logger.metadata(
       fn ->
         if reorg? do
+          # we need to remove all rows from `op_transaction_batches` and `op_withdrawals` tables previously written starting from reorg block number
+          remove_optimism_assets_by_number(block_number_to_fetch)
+
           # we need to remove all rows from `polygon_edge_withdrawals` and `polygon_edge_deposit_executes` tables previously written starting from reorg block number
           remove_polygon_edge_assets_by_number(block_number_to_fetch)
 
@@ -285,21 +311,28 @@ defmodule Indexer.Block.Realtime.Fetcher do
     )
   end
 
+  defp remove_optimism_assets_by_number(block_number_to_fetch) do
+    if Application.get_env(:explorer, :chain_type) == :optimism do
+      OptimismTxnBatch.handle_l2_reorg(block_number_to_fetch)
+      OptimismWithdrawal.remove(block_number_to_fetch)
+    end
+  end
+
   defp remove_polygon_edge_assets_by_number(block_number_to_fetch) do
-    if Application.get_env(:explorer, :chain_type) == "polygon_edge" do
+    if Application.get_env(:explorer, :chain_type) == :polygon_edge do
       Withdrawal.remove(block_number_to_fetch)
       DepositExecute.remove(block_number_to_fetch)
     end
   end
 
   defp remove_polygon_zkevm_assets_by_number(block_number_to_fetch) do
-    if Application.get_env(:explorer, :chain_type) == "polygon_zkevm" do
+    if Application.get_env(:explorer, :chain_type) == :polygon_zkevm do
       PolygonZkevmBridgeL2.reorg_handle(block_number_to_fetch)
     end
   end
 
   defp remove_shibarium_assets_by_number(block_number_to_fetch) do
-    if Application.get_env(:explorer, :chain_type) == "shibarium" do
+    if Application.get_env(:explorer, :chain_type) == :shibarium do
       ShibariumBridgeL2.reorg_handle(block_number_to_fetch)
     end
   end
