@@ -1,6 +1,6 @@
 defmodule Explorer.Helper do
   @moduledoc """
-  Common explorer helper
+  Auxiliary common functions.
   """
 
   alias ABI.TypeDecoder
@@ -30,15 +30,18 @@ defmodule Explorer.Helper do
     |> TypeDecoder.decode_raw(types)
   end
 
-  @spec parse_integer(binary() | nil) :: integer() | nil
-  def parse_integer(nil), do: nil
-
-  def parse_integer(string) do
-    case Integer.parse(string) do
-      {number, ""} -> number
+  def parse_integer(integer_string) when is_binary(integer_string) do
+    case Integer.parse(integer_string) do
+      {integer, ""} -> integer
       _ -> nil
     end
   end
+
+  def parse_integer(value) when is_integer(value) do
+    value
+  end
+
+  def parse_integer(_integer_string), do: nil
 
   @doc """
   Parses number from hex string or decimal number string
@@ -133,10 +136,12 @@ defmodule Explorer.Helper do
   @doc """
     Validate url
   """
-  @spec valid_url?(String.t()) :: boolean
-  def valid_url?(string) do
+  @spec valid_url?(String.t()) :: boolean()
+  def valid_url?(string) when is_binary(string) do
     uri = URI.parse(string)
 
-    uri.scheme != nil && uri.host =~ "."
+    !is_nil(uri.scheme) && !is_nil(uri.host)
   end
+
+  def valid_url?(_), do: false
 end

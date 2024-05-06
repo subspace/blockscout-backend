@@ -19,6 +19,16 @@ defmodule Explorer.Chain.Import.Stage.BlockReferencing do
     Runner.Withdrawals
   ]
 
+  @optimism_runners [
+    Runner.Optimism.FrameSequences,
+    Runner.Optimism.TxnBatches,
+    Runner.Optimism.OutputRoots,
+    Runner.Optimism.DisputeGames,
+    Runner.Optimism.Deposits,
+    Runner.Optimism.Withdrawals,
+    Runner.Optimism.WithdrawalEvents
+  ]
+
   @polygon_edge_runners [
     Runner.PolygonEdge.Deposits,
     Runner.PolygonEdge.DepositExecutes,
@@ -34,6 +44,13 @@ defmodule Explorer.Chain.Import.Stage.BlockReferencing do
     Runner.PolygonZkevm.BridgeOperations
   ]
 
+  @zksync_runners [
+    Runner.ZkSync.LifecycleTransactions,
+    Runner.ZkSync.TransactionBatches,
+    Runner.ZkSync.BatchTransactions,
+    Runner.ZkSync.BatchBlocks
+  ]
+
   @shibarium_runners [
     Runner.Shibarium.BridgeOperations
   ]
@@ -44,18 +61,24 @@ defmodule Explorer.Chain.Import.Stage.BlockReferencing do
 
   @impl Stage
   def runners do
-    case System.get_env("CHAIN_TYPE") do
-      "polygon_edge" ->
+    case Application.get_env(:explorer, :chain_type) do
+      :optimism ->
+        @default_runners ++ @optimism_runners
+
+      :polygon_edge ->
         @default_runners ++ @polygon_edge_runners
 
-      "polygon_zkevm" ->
+      :polygon_zkevm ->
         @default_runners ++ @polygon_zkevm_runners
 
-      "shibarium" ->
+      :shibarium ->
         @default_runners ++ @shibarium_runners
 
-      "ethereum" ->
+      :ethereum ->
         @default_runners ++ @ethereum_runners
+
+      :zksync ->
+        @default_runners ++ @zksync_runners
 
       _ ->
         @default_runners
@@ -64,7 +87,8 @@ defmodule Explorer.Chain.Import.Stage.BlockReferencing do
 
   @impl Stage
   def all_runners do
-    @default_runners ++ @polygon_edge_runners ++ @polygon_zkevm_runners ++ @shibarium_runners
+    @default_runners ++
+      @optimism_runners ++ @polygon_edge_runners ++ @polygon_zkevm_runners ++ @shibarium_runners ++ @zksync_runners
   end
 
   @impl Stage

@@ -45,13 +45,16 @@ config :explorer, Explorer.Repo.Account,
 
 for repo <- [
       Explorer.Repo.Beacon,
+      Explorer.Repo.Optimism,
       Explorer.Repo.PolygonEdge,
       Explorer.Repo.PolygonZkevm,
+      Explorer.Repo.ZkSync,
       Explorer.Repo.RSK,
       Explorer.Repo.Shibarium,
       Explorer.Repo.Suave,
       Explorer.Repo.BridgedTokens,
-      Explorer.Repo.Filecoin
+      Explorer.Repo.Filecoin,
+      Explorer.Repo.Stability
     ] do
   config :explorer, repo,
     database: "explorer_test",

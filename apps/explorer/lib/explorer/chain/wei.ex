@@ -118,8 +118,12 @@ defmodule Explorer.Chain.Wei do
   @wei_per_ether Decimal.new(1_000_000_000_000_000_000)
   @wei_per_gwei Decimal.new(1_000_000_000)
 
-  @spec hex_format(Wei.t()) :: String.t()
+  @spec hex_format(Wei.t() | Decimal.t() | nil) :: String.t()
   def hex_format(%Wei{value: decimal}) do
+    hex_format(decimal)
+  end
+
+  def hex_format(%Decimal{} = decimal) do
     hex =
       decimal
       |> Decimal.to_integer()
@@ -127,6 +131,10 @@ defmodule Explorer.Chain.Wei do
       |> String.downcase()
 
     "0x" <> hex
+  end
+
+  def hex_format(nil) do
+    "0x0"
   end
 
   @doc """
