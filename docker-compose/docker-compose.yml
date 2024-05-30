@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 
 services:
   redis-db:
@@ -37,14 +37,21 @@ services:
         CACHE_TOTAL_GAS_USAGE_COUNTER_ENABLED: ""
         CACHE_ADDRESS_WITH_BALANCES_UPDATE_INTERVAL: ""
         ADMIN_PANEL_ENABLED: ""
-        RELEASE_VERSION: 6.6.0
+        RELEASE_VERSION: 6.5.0
     links:
       - db:database
+    command: sh -c "bin/blockscout eval \"Elixir.Explorer.ReleaseTasks.create_and_migrate()\" && bin/blockscout start"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    env_file:
+      - ./envs/common-blockscout.env
     environment:
-        ETHEREUM_JSONRPC_HTTP_URL: http://host.docker.internal:8545/
-        ETHEREUM_JSONRPC_TRACE_URL: http://host.docker.internal:8545/
-        ETHEREUM_JSONRPC_WS_URL: ws://host.docker.internal:8545/
-        CHAIN_ID: '1337'
+      ETHEREUM_JSONRPC_HTTP_URL: https://nova-0.gemini-3h.subspace.network/ws
+      ETHEREUM_JSONRPC_TRACE_URL: https://nova-0.gemini-3h.subspace.network/ws
+      ETHEREUM_JSONRPC_WS_URL: wss://nova-0.gemini-3h.subspace.network/ws
+      CHAIN_ID: "49000"
+    volumes:
+      - ./logs/:/app/logs/
 
   visualizer:
     extends:
@@ -84,14 +91,6 @@ services:
       file: ./services/stats.yml
       service: stats
 
-  user-ops-indexer:
-    depends_on:
-      - db
-      - backend
-    extends:
-      file: ./services/user-ops-indexer.yml
-      service: user-ops-indexer
-
   proxy:
     depends_on:
       - backend
@@ -100,3 +99,19 @@ services:
     extends:
       file: ./services/nginx.yml
       service: proxy
+
+  agent:
+    container_name: newrelic-infra
+    image: newrelic/infrastructure:latest
+    cap_add:
+      - SYS_PTRACE
+    network_mode: bridge
+    pid: host
+    privileged: true
+    volumes:
+      - "/:/host:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      NRIA_LICENSE_KEY: "${NR_API_KEY}"
+      NRIA_DISPLAY_NAME: "blockscout-gemini-3h"
+    restart: unless-stopped

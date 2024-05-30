@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 
 services:
   redis-db:
@@ -53,13 +53,6 @@ services:
     extends:
       file: ./services/stats.yml
       service: stats
-
-  user-ops-indexer:
-    depends_on:
-      - db
-    extends:
-      file: ./services/user-ops-indexer.yml
-      service: user-ops-indexer
 
   proxy:
     depends_on:

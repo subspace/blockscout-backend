@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 
 services:
   stats-db-init:
@@ -19,9 +19,9 @@ services:
     container_name: 'stats-db'
     command: postgres -c 'max_connections=200'
     environment:
-        POSTGRES_DB: 'stats'
-        POSTGRES_USER: 'stats'
-        POSTGRES_PASSWORD: 'n0uejXPl61ci6ldCuE2gQU5Y'
+      POSTGRES_PASSWORD: ""
+      POSTGRES_USER: "postgres"
+      POSTGRES_HOST_AUTH_METHOD: "trust"
     ports:
       - target: 5432
         published: 7433
@@ -41,11 +41,12 @@ services:
     restart: always
     container_name: 'stats'
     extra_hosts:
-      - 'host.docker.internal:host-gateway'
+      - "host.docker.internal:host-gateway"
     env_file:
-      -  ../envs/common-stats.env
+      - ../envs/common-stats.env
     environment:
-      - STATS__DB_URL=${STATS__DB_URL:-postgres://stats:n0uejXPl61ci6ldCuE2gQU5Y@stats-db:5432/stats}
       - STATS__BLOCKSCOUT_DB_URL=${STATS__BLOCKSCOUT_DB_URL:-postgresql://blockscout:ceWb1MeLBEeOIfk65gU8EjF8@db:5432/blockscout}
-      - STATS__CREATE_DATABASE=${STATS__CREATE_DATABASE:-true}
-      - STATS__RUN_MIGRATIONS=${STATS__RUN_MIGRATIONS:-true}
+      - STATS__DB_URL=postgres://stats:n0uejXPl61ci6ldCuE2gQU5Y@stats-db:5432/stats
+      - STATS__BLOCKSCOUT_DB_URL=${STATS__BLOCKSCOUT_DB_URL:-postgresql://blockscout:ceWb1MeLBEeOIfk65gU8EjF8@db:5432/blockscout}
+      - STATS__CREATE_DATABASE=true
+      - STATS__RUN_MIGRATIONS=true
