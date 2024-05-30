@@ -113,5 +113,5 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       NRIA_LICENSE_KEY: "${NR_API_KEY}"
-      NRIA_DISPLAY_NAME: "blockscout-gemini-3h"
+      NRIA_DISPLAY_NAME: "blockscout-gemini-3h-staging"
     restart: unless-stopped
